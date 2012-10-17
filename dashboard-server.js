@@ -2,7 +2,7 @@ var express = require('express'),
     users = require('./lib/users'),
     auth = require('./lib/authentication');
 
-//get config from the environment
+// configuration variables
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
 
