@@ -18,11 +18,15 @@ app.use(express.static(__dirname + '/public'));
 app.enable("trust proxy");
 
 // define the endpoints
-app.post('/authenticate', auth.checkCredentials);
-app.get('/logout', auth.logout);
-app.get('/protected', auth.requireValidUser, function (request, response) {
+// -authentication
+app.post('/api/authenticate', auth.checkCredentials);
+app.get('/api/logout', auth.logout);
+// -user
+app.get('/api/protected', auth.requireValidUser, function (request, response) {
    response.json({message: 'You are privileged!'});
 });
+// -worksheet
+
 
 // start the server
 app.listen(port, function () {
