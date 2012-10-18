@@ -1,10 +1,46 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-You are logged in as <%= user.username %>
+<% var title = "MonkeyCruncher dashboard" %>
+<% var worksheets = ["My first worksheet", "Lab ride to Box Hill", "The simple harmonic oscillator", "Interaction example", "Graph plotting"] %>
+<% include header.html %>
+<body style='padding-top: 40px;'>
+<div class='container'>
+
+    <div class="navbar navbar-static-top">
+        <div class="navbar-inner">
+            <a class="brand" href="#">&nbsp MonkeyCruncher dashboard</a>
+            <ul class="nav">
+                <li><a>Logged in as <%= user.username %></a></li>
+            </ul>
+            <ul class="nav pull-right">
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+
+        </div>
+    </div>
+    <div class='row'>
+        <div class='span12'>
+            <h1 style='padding-top: 40px'>Your worksheets</h1>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='span12'>
+            <table class="table table-striped table-bordered">
+                <% worksheets.forEach(function(ws){ %>
+                <tr>
+                    <td><%= ws %>
+                    <span class='pull-right'>
+                        <button class='btn btn-mini btn-primary'>Edit</button>
+                        &nbsp
+                        <button class='btn btn-mini btn-danger'>Delete</button>
+                        &nbsp
+                        <button class='btn btn-mini btn-success'>Share</button>
+                    </span>
+                        </td>
+                </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
 </body>
 </html>

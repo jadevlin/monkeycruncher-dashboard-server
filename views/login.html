@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign in to MonkeyCruncher ...</title>
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<% var title = "Sign in to MonkeyCruncher ..." %>
+<% include header.html %>
 
 <body style='margin-top: 90px;'>
 <div class='container'>
@@ -37,16 +32,4 @@
 </div>
 </body>
 
-<script>
-    $('#loginButton').click(function () {
-        $.post(
-                "api/authenticate",
-                {username: $('#username').val(), password: $('#password').val()},
-                function (data) {
-                    $('#result').html('<p>' + JSON.stringify(data) + '</p>')
-                },
-                'json'
-        );
-    })
-</script>
 </html>
