@@ -31,8 +31,11 @@ app.get('/login.html', function (request, response) {
     response.render('login');
 });
 
-app.get('/dashboard.html', auth.requireValidUser, function (request, response) {
-   response.render('dashboard', { user: {username: 'test'}});
+app.get('/dashboard.html', auth.requireValidUser, users.loadUser, function (request, response) {
+   response.render('dashboard',
+       {
+           user: response.locals.user
+       });
 });
 
 
