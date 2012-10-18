@@ -11,6 +11,7 @@
         "redis": "*",
         "connect-redis": "*",
         "url": "*",
-        "bcrypt": "*"
+        "bcrypt": "*",
+        "ejs": "*"
     }
 }

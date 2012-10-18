@@ -8,24 +8,32 @@ var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
 
 // configure the server
 var app = express();
+// the view engine
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'html');
+// default middleware
 app.use(express.favicon());
 app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ secret: sessionSecret}));
 app.use(app.router);
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/static'));
 app.enable("trust proxy");
 
-// define the endpoints
-// -authentication
-app.post('/api/authenticate', auth.checkCredentials);
-app.get('/api/logout', auth.logout);
-// -user
-app.get('/api/protected', auth.requireValidUser, function (request, response) {
-   response.json({message: 'You are privileged!'});
+// authentication
+app.post('/authenticate', auth.checkCredentials);
+app.get('/logout', auth.logout);
+
+// define views
+app.get('/login.html', function (request, response) {
+    response.render('login');
 });
-// -worksheet
+
+app.get('/dashboard.html', auth.requireValidUser, function (request, response) {
+   response.render('dashboard', { user: {username: 'test'}});
+});
 
 
 // start the server

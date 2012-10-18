@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign in to MonkeyCruncher ...</title>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style='margin-top: 90px;'>
+<div class='container'>
+    <div class='row'>
+        <div class='span6 offset3'>
+            <form class="form-horizontal" action="/authenticate" method="post">
+                <legend>Sign in to MonkeyCruncher ...</legend>
+                <div><%= message %></div>
+                <div class="control-group">
+                    <label class="control-label" for="inputUsername">Username</label>
+
+                    <div class="controls">
+                        <input type="text" name="username" id="inputUsername" placeholder="Username">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Password</label>
+
+                    <div class="controls">
+                        <input type="password" name="password" id="inputPassword" placeholder="Password">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $('#loginButton').click(function () {
+        $.post(
+                "api/authenticate",
+                {username: $('#username').val(), password: $('#password').val()},
+                function (data) {
+                    $('#result').html('<p>' + JSON.stringify(data) + '</p>')
+                },
+                'json'
+        );
+    })
+</script>
+</html>
