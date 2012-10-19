@@ -1,20 +1,25 @@
+DROP TABLE worksheets;
 DROP TABLE users;
+
 CREATE TABLE users
 (
-  id SERIAL,
+  id bigserial PRIMARY KEY,
   username text NOT NULL UNIQUE,
   password_hash text,
   email text,
   active boolean,
-  admin boolean,
-  CONSTRAINT id_primary_key PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
+  admin boolean
 );
+-- Indices like these are implicitly created by the constraints.
+-- CREATE INDEX users_id_index ON users (id);
+-- CREATE INDEX users_username_index ON users (username);
 
-DROP TABLE worksheets;
 CREATE TABLE worksheets
 (
-  id SERIAL
+  id bigserial PRIMARY KEY,
+  name text,
+  owner bigint REFERENCES users (id),
+  documentRef integer
 );
+-- An index like this is implicitly created by the constraints.
+-- CREATE INDEX worksheets_id_index ON worksheets (id);

@@ -42,10 +42,33 @@
     </div>
     <div class='row'>
         <div class='span4'>
-            <button class='btn btn-success'>Create new worksheet</button>
+            <a href="#myModal" role="button" class="btn btn-success" data-toggle="modal">Create new worksheet</a>
+
+            <div class="modal hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Create new worksheet</h3>
+                </div>
+                <form class="form-horizontal" action="/create" method="post">
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label" for="inputUsername">Worksheet name</label>
+
+                            <div class="controls">
+                                <input type="text" name="username" id="inputUsername" placeholder="Username">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+
+            </div>
         </div>
     </div>
-</div>
 </div>
 </body>
 </html>

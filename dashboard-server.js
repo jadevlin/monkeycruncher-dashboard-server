@@ -30,6 +30,10 @@ app.post('/authenticate', auth.checkCredentials('/login.html', '/dashboard.html'
 app.get('/logout', auth.logout('/login.html'));
 // registration
 app.post('/register', auth.register('/register.html', '/registration_success.html'));
+// worksheets
+app.post('/create', function (request, response) {
+    response.end("Worksheet created");
+});
 
 // ** Views **
 // These pages are defined as views to take advantage of the templating to keep the page style
