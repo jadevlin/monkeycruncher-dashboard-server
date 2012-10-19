@@ -1,0 +1,42 @@
+<% var title = "Sign up for MonkeyCruncher alpha ..." %>
+<% include header.html %>
+
+<body style='margin-top: 90px;'>
+<div class='container'>
+    <div class='row'>
+        <div class='span6 offset3'>
+            <form class="form-horizontal" action="/register" method="post">
+                <legend>Request access to MonkeyCruncher alpha ...</legend>
+                <div class="control-group">
+                    <label class="control-label" for="inputUsername">Username</label>
+
+                    <div class="controls">
+                        <input type="text" name="username" id="inputUsername" placeholder="Username">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email</label>
+
+                    <div class="controls">
+                        <input type="text" name="email" id="inputEmail" placeholder="joe@bloggs.com">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Password</label>
+
+                    <div class="controls">
+                        <input type="password" name="password" id="inputPassword" placeholder="Password">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
