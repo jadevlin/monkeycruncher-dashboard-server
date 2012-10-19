@@ -1,6 +1,7 @@
 var express = require('express'),
     users = require('./lib/users'),
-    auth = require('./lib/authentication');
+    auth = require('./lib/authentication'),
+    session = require('./lib/session');
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -18,6 +19,7 @@ app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ secret: sessionSecret}));
+app.use(session.messagePassing());
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
 app.enable("trust proxy");
@@ -30,16 +32,16 @@ app.get('/logout', auth.logout('/login.html'));
 app.post('/register', auth.register('/register.html', '/registration_success.html'));
 
 // ** Views **
-// These pages are defined as views simply to take advantage of the templating to keep the page style
-// consistent
+// These pages are defined as views to take advantage of the templating to keep the page style
+// consistent and allow passing messages to the user on error
 var addTrivialView = function (path, viewName) {
     app.get(path, function (request, response) {
-        response.render(viewName);
+        response.render(viewName, {message: response.locals.message});
     });
 };
 addTrivialView('/login.html', 'login');
 addTrivialView('/register.html', 'register');
-addTrivialView('/registration_success.html', 'registration_success')
+addTrivialView('/registration_success.html', 'registration_success');
 
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',

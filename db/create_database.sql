@@ -3,7 +3,7 @@ DROP TABLE users;
 CREATE TABLE users
 (
   userid SERIAL,
-  username text NOT NULL,
+  username text NOT NULL UNIQUE,
   passwordhash text,
   email text,
   active boolean,
