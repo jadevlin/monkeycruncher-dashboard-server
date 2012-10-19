@@ -1,15 +1,20 @@
--- Table: users
 DROP TABLE users;
 CREATE TABLE users
 (
-  userid SERIAL,
+  id SERIAL,
   username text NOT NULL UNIQUE,
-  passwordhash text,
+  password_hash text,
   email text,
   active boolean,
   admin boolean,
-  CONSTRAINT userid_primary_key PRIMARY KEY (userid)
+  CONSTRAINT id_primary_key PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
+);
+
+DROP TABLE worksheets;
+CREATE TABLE worksheets
+(
+  id SERIAL
 );
