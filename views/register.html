@@ -5,27 +5,27 @@
 <div class='container'>
     <div class='row'>
         <div class='span6 offset3'>
-            <form class="form-horizontal" action="/register" method="post">
+            <form class="form-horizontal" id='registerForm' action="/register" method="post">
                 <legend>Request access to MonkeyCruncher alpha ...</legend>
                 <div class="control-group">
                     <label class="control-label" for="inputUsername">Username</label>
 
                     <div class="controls">
-                        <input type="text" name="username" id="inputUsername" placeholder="Username">
+                        <input type="text" class='required' name="username" id="inputUsername" placeholder="Username">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Email</label>
 
                     <div class="controls">
-                        <input type="text" name="email" id="inputEmail" placeholder="joe@bloggs.com">
+                        <input type="text" class='required email' name="email" id="inputEmail" placeholder="joe@bloggs.com">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="inputPassword">Password</label>
 
                     <div class="controls">
-                        <input type="password" name="password" id="inputPassword" placeholder="Password">
+                        <input type="password" class='required' name="password" id="inputPassword" placeholder="Password">
                     </div>
                 </div>
                 <div class="control-group">
@@ -37,6 +37,12 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#registerForm").validate();
+    });
+</script>
 </body>
 
 </html>
