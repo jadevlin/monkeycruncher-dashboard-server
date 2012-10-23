@@ -55,10 +55,12 @@ addTrivialView('/registration_success.html', 'registration_success');
 app.get('/dashboard.html',
     auth.requireAuthenticated,
     users.loadUser,
+    worksheets.loadWorksheets,
     function (request, response) {
         response.render('dashboard',
             {
-                user: response.locals.user
+                user: response.locals.user,
+                worksheets: response.locals.worksheets
             });
     });
 
