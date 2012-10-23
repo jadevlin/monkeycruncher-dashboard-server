@@ -12,6 +12,7 @@
         "connect-redis": "*",
         "url": "*",
         "bcrypt": "*",
-        "ejs": "*"
+        "ejs": "*",
+        "node-uuid": "*"
     }
 }

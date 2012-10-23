@@ -1,11 +1,13 @@
 var express = require('express'),
     users = require('./lib/users'),
+    worksheets = require('./lib/worksheets'),
     auth = require('./lib/authentication'),
     session = require('./lib/session');
 
 // configuration variables
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
+var editServerURL = process.env.EDIT_SERVER_URL || "https://localhost:5050/";
 
 // configure the server
 var app = express();
@@ -31,9 +33,11 @@ app.get('/logout', auth.logout('/login.html'));
 // registration
 app.post('/register', auth.register('/register.html', '/registration_success.html'));
 // worksheets
-app.post('/create', function (request, response) {
-    response.end("Worksheet created");
-});
+app.post('/create',
+    auth.requireAuthenticated,
+    users.loadUser,
+    worksheets.create(editServerURL)
+);
 
 // ** Views **
 // These pages are defined as views to take advantage of the templating to keep the page style
@@ -49,7 +53,7 @@ addTrivialView('/registration_success.html', 'registration_success');
 
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',
-    auth.requireValidUser,
+    auth.requireAuthenticated,
     users.loadUser,
     function (request, response) {
         response.render('dashboard',
