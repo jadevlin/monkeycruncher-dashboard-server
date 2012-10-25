@@ -11,6 +11,7 @@ var editServerURL = process.env.EDIT_SERVER_URL || "https://localhost:5050/";
 
 // configure the server
 var app = express();
+app.enable("trust proxy");
 // the view engine
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/views');
@@ -24,19 +25,29 @@ app.use(express.session({ secret: sessionSecret}));
 app.use(session.messagePassing());
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
-app.enable("trust proxy");
+
 
 // ** Actions **
 // authentication
+// requires parameters username and password in request body
 app.post('/authenticate', auth.checkCredentials('/login.html', '/dashboard.html'));
 app.get('/logout', auth.logout('/login.html'));
 // registration
-app.post('/register', auth.register('/register.html', '/registration_success.html'));
+// requires parameters username, password and email in request body
+app.post('/register', users.register('/register.html', '/registration_success.html'));
 // worksheets
+// requires parameter name in request body
 app.post('/create',
     auth.requireAuthenticated,
     users.loadUser,
-    worksheets.create(editServerURL)
+    worksheets.create(editServerURL, '/dashboard.html', '/dashboard.html')
+);
+// requires parameter worksheetID in request body
+app.post('/delete',
+    auth.requireAuthenticated,
+    users.loadUser,
+    worksheets.mustBeWorksheetOwner,
+    worksheets.delete(editServerURL, '/dashboard.html', '/dashboard.html')
 );
 
 // ** Views **
@@ -55,7 +66,7 @@ addTrivialView('/registration_success.html', 'registration_success');
 app.get('/dashboard.html',
     auth.requireAuthenticated,
     users.loadUser,
-    worksheets.loadWorksheets,
+    worksheets.loadAllWorksheets,
     function (request, response) {
         response.render('dashboard',
             {
