@@ -25,29 +25,42 @@ app.use(express.session({ secret: sessionSecret}));
 app.use(session.messagePassing());
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
+app.use(express.errorHandler());
 
 
 // ** Actions **
+// redirect helper function
+var redirect = function (url) { return function (request, response) { response.redirect(url); }};
 // authentication
 // requires parameters username and password in request body
-app.post('/authenticate', auth.checkCredentials('/login.html', '/dashboard.html'));
-app.get('/logout', auth.logout('/login.html'));
+app.post('/authenticate',
+    auth.checkCredentials,
+    redirect('/dashboard.html')
+);
+app.get('/logout',
+    auth.logout,
+    redirect('/login.html')
+);
 // registration
 // requires parameters username, password and email in request body
-app.post('/register', users.register('/register.html', '/registration_success.html'));
+app.post('/register',
+    users.register,
+    redirect('/registration_success.html')
+);
 // worksheets
 // requires parameter name in request body
 app.post('/create',
-    auth.requireAuthenticated,
+    auth.requireAuthenticated('/login.html'),
     users.loadUser,
-    worksheets.create(editServerURL, '/dashboard.html', '/dashboard.html')
+    worksheets.create(editServerURL),
+    redirect('/dashboard.html')
 );
 // requires parameter worksheetID in request body
 app.post('/delete',
-    auth.requireAuthenticated,
+    auth.requireAuthenticated('/login.html'),
     users.loadUser,
     worksheets.mustBeWorksheetOwner,
-    worksheets.delete(editServerURL, '/dashboard.html', '/dashboard.html')
+    worksheets.delete(editServerURL)
 );
 
 // ** Views **
@@ -64,7 +77,7 @@ addTrivialView('/registration_success.html', 'registration_success');
 
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',
-    auth.requireAuthenticated,
+    auth.requireAuthenticated('/login.html'),
     users.loadUser,
     worksheets.loadAllWorksheets,
     function (request, response) {
