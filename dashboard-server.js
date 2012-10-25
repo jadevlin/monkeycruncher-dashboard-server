@@ -22,7 +22,6 @@ app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ secret: sessionSecret}));
-app.use(session.messagePassing());
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
 app.use(express.errorHandler());
