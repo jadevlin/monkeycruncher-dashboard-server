@@ -59,12 +59,14 @@ app.post('/delete',
     auth.requireAuthenticated('/login.html'),
     users.loadUser,
     worksheets.mustBeWorksheetOwner,
-    worksheets.delete(editServerURL)
+    worksheets.delete(editServerURL),
+    redirect('/dashboard.html')
 );
+
 
 // ** Views **
 // These pages are defined as views to take advantage of the templating to keep the page style
-// consistent and allow passing messages to the user on error
+// consistent.
 var addTrivialView = function (path, viewName) {
     app.get(path, function (request, response) {
         response.render(viewName, {message: response.locals.message});
@@ -73,6 +75,16 @@ var addTrivialView = function (path, viewName) {
 addTrivialView('/login.html', 'login');
 addTrivialView('/register.html', 'register');
 addTrivialView('/registration_success.html', 'registration_success');
+addTrivialView('/create.html', 'create');
+
+
+app.get('/delete.html',
+    function (request, response) {
+        var worksheetID = request.query['worksheetID'];
+        response.render('delete', {worksheetID: worksheetID});
+    }
+);
+
 
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',

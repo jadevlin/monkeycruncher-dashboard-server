@@ -1,0 +1,28 @@
+<% var title = "Create new worksheet ..." %>
+<% include header.html %>
+
+<body style='margin-top: 90px;'>
+<div class='container'>
+    <div class='row'>
+        <div class='span6 offset3'>
+            <form class="form-horizontal" action="/create" method="post">
+                <legend>Create new worksheet ...</legend>
+                <div class="control-group">
+                    <label class="control-label" for="inputName">Worksheet name</label>
+
+                    <div class="controls">
+                        <input type="text" name="name" id="inputName" placeholder="My awesome worksheet">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

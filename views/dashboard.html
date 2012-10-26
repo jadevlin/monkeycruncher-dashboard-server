@@ -27,11 +27,10 @@
                 <tr>
                     <td><%= ws.name %>
                     <span class='pull-right'>
-                        <button class='btn btn-mini btn-primary'>Edit</button>
+
+                        <a class='btn btn-mini btn-primary'>Edit</a>
                         &nbsp
-                        <button class='btn btn-mini btn-danger'>Delete</button>
-                        &nbsp
-                        <button class='btn btn-mini btn-success'>Share</button>
+                        <a class='btn btn-mini btn-danger' href="/delete.html?worksheetID=<%= ws.id %>">Delete</a>
                     </span>
                     </td>
                 </tr>
@@ -41,31 +40,7 @@
     </div>
     <div class='row'>
         <div class='span4'>
-            <a href="#myModal" role="button" class="btn btn-success" data-toggle="modal">Create new worksheet</a>
-
-            <div class="modal hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel">Create new worksheet</h3>
-                </div>
-                <form class="form-horizontal" action="/create" method="post">
-                    <div class="modal-body">
-                        <div class="control-group">
-                            <label class="control-label" for="inputName">Worksheet name</label>
-
-                            <div class="controls">
-                                <input type="text" name="name" id="inputName" placeholder="My awesome worksheet">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </div>
-                </form>
-
-            </div>
+            <a href="/create.html" class="btn btn-success">Create new worksheet</a>
         </div>
     </div>
 </div>
