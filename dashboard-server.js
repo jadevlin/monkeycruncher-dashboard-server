@@ -77,7 +77,7 @@ addTrivialView('/register.html', 'register');
 addTrivialView('/registration_success.html', 'registration_success');
 addTrivialView('/create.html', 'create');
 
-
+// TODO: This is a bit hackish, but will do for the moment. All of this will go away when moved to a single-page app.
 app.get('/delete.html',
     function (request, response) {
         var worksheetID = request.query['worksheetID'];
