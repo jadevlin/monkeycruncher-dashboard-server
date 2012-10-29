@@ -1,5 +1,5 @@
 {
-    "name": "mc-dashboard",
+    "name": "monkeycruncher-dashboard",
     "version": "0.1.0",
     "engines": {
         "node": "0.8.4",

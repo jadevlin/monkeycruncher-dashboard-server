@@ -2,7 +2,7 @@ var express = require('express'),
     users = require('./lib/users'),
     worksheets = require('./lib/worksheets'),
     auth = require('./lib/authentication'),
-    session = require('./lib/session');
+    sessionStore = require('./lib/session-store');
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -21,7 +21,8 @@ app.use(express.favicon());
 app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
-app.use(express.session({ secret: sessionSecret}));
+//app.use(express.session({ secret: sessionSecret}));
+app.use(express.session({ store: sessionStore.createStore(express), secret: sessionSecret }));
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
 app.use(express.errorHandler());
