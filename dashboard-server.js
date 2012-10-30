@@ -7,7 +7,7 @@ var express = require('express'),
 // configuration variables
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
-var editServerURL = process.env.EDIT_SERVER_URL || "https://localhost:5050/";
+var editServerURL = process.env.EDIT_SERVER_URL || "http://localhost:5050/";
 
 // configure the server
 var app = express();

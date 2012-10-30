@@ -1,5 +1,5 @@
-DROP TABLE worksheets;
-DROP TABLE users;
+DROP TABLE IF EXISTS worksheets;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
 (
