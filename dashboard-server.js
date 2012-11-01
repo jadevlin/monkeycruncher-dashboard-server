@@ -7,7 +7,7 @@ var express = require('express'),
 // configuration variables
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
-var editServerURL = process.env.EDIT_SERVER_URL || "http://localhost:5050/";
+var editServerURL = process.env.EDIT_SERVER_URL || "http://edit-server.localhost:5050/";
 
 // configure the server
 var app = express();
@@ -63,7 +63,19 @@ app.post('/delete',
     worksheets.delete(editServerURL),
     redirect('/dashboard.html')
 );
-
+// requires worksheetID in the URL. Does something really nasty to move it in to the body!
+// TODO: this will be made more rational once the dashboard is made in to a single-page app.
+app.get('/edit/:id',
+    function (request, response, next) { request.body.worksheetID = request.params.id; next();}, //YUCK
+    auth.requireAuthenticated('/login.html'),
+    users.loadUser,
+    worksheets.mustBeWorksheetOwner,
+    worksheets.loadWorksheet,
+    function (request, response) {
+        response.redirect(editServerURL + 'client/worksheet.html?uuid=' +
+            encodeURIComponent(response.locals.worksheet.documentRef));
+    }
+);
 
 // ** Views **
 // These pages are defined as views to take advantage of the templating to keep the page style

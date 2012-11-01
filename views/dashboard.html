@@ -25,11 +25,8 @@
             <table class="table table-striped table-bordered">
                 <% worksheets.forEach(function(ws){ %>
                 <tr>
-                    <td><%= ws.name %>
+                    <td><a href="/edit/<%= ws.id %>" target="_blank"><%= ws.name %></a>
                     <span class='pull-right'>
-
-                        <a class='btn btn-mini btn-primary'>Edit</a>
-                        &nbsp
                         <a class='btn btn-mini btn-danger' href="/delete.html?worksheetID=<%= ws.id %>">Delete</a>
                     </span>
                     </td>
