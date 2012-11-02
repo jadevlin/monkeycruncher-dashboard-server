@@ -8,6 +8,7 @@ var express = require('express'),
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
 var editServerURL = process.env.EDIT_SERVER_URL || "http://edit-server.localhost:5050/";
+var editServerSecret = process.env.EDIT_SERVER_SECRET || "a secret for inter-app communication";
 
 // configure the server
 var app = express();
@@ -52,7 +53,7 @@ app.post('/register',
 app.post('/create',
     auth.requireAuthenticated('/login.html'),
     users.loadUser,
-    worksheets.create(editServerURL),
+    worksheets.create(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
 // requires parameter worksheetID in request body
@@ -60,7 +61,7 @@ app.post('/delete',
     auth.requireAuthenticated('/login.html'),
     users.loadUser,
     worksheets.mustBeWorksheetOwner,
-    worksheets.delete(editServerURL),
+    worksheets.delete(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
 // requires worksheetID in the URL. Does something really nasty to move it in to the body!
@@ -71,10 +72,7 @@ app.get('/edit/:id',
     users.loadUser,
     worksheets.mustBeWorksheetOwner,
     worksheets.loadWorksheet,
-    function (request, response) {
-        response.redirect(editServerURL + 'client/worksheet.html?uuid=' +
-            encodeURIComponent(response.locals.worksheet.documentRef));
-    }
+    worksheets.edit(editServerURL, editServerSecret)
 );
 
 // ** Views **
