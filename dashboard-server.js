@@ -61,6 +61,7 @@ app.post('/delete',
     auth.requireAuthenticated('/login.html'),
     users.loadUser,
     worksheets.mustBeWorksheetOwner,
+    worksheets.loadWorksheet,
     worksheets.delete(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
