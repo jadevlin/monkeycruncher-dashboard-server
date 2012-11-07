@@ -3,16 +3,17 @@
 <body style='padding-top: 40px;'>
 <div class='container'>
 
-    <div class="navbar navbar-static-top">
+    <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <a class="brand" href="#">MonkeyCruncher dashboard</a>
-            <ul class="nav">
-                <li><a>Logged in as <%= user.username %></a></li>
-            </ul>
-            <ul class="nav pull-right">
-                <li><a href="/logout">Logout</a></li>
-            </ul>
-
+            <div class='container-fluid'>
+                <a class="brand" href="#">MonkeyCruncher dashboard</a>
+                <ul class="nav">
+                    <li><a>Logged in as <%= user.username %></a></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li><form class='navbar-form'><a class='btn btn-danger' href="/logout">Logout</a></form></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class='row'>
