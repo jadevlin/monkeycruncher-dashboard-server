@@ -1,6 +1,6 @@
 var express = require('express'),
-    users = require('./lib/users'),
-    worksheets = require('./lib/worksheets'),
+    usersMW = require('./lib/users-mw'),
+    worksheetsMW = require('./lib/worksheets-mw'),
     auth = require('./lib/authentication'),
     sessionStore = require('./lib/session-store');
 
@@ -31,7 +31,11 @@ app.use(express.errorHandler());
 
 // ** Actions **
 // redirect helper function
-var redirect = function (url) { return function (request, response) { response.redirect(url); }};
+var redirect = function (url) {
+    return function (request, response) {
+        response.redirect(url);
+    }
+};
 // authentication
 // requires parameters username and password in request body
 app.post('/authenticate',
@@ -45,35 +49,49 @@ app.get('/logout',
 // registration
 // requires parameters username, password and email in request body
 app.post('/register',
-    users.register,
+    usersMW.register,
     redirect('/registration_success.html')
 );
 // worksheets
 // requires parameter name in request body
 app.post('/create',
     auth.requireAuthenticated('/login.html'),
-    users.loadUser,
-    worksheets.create(editServerURL, editServerSecret),
+    usersMW.loadUser,
+    worksheetsMW.create(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
 // requires parameter worksheetID in request body
 app.post('/delete',
     auth.requireAuthenticated('/login.html'),
-    users.loadUser,
-    worksheets.mustBeWorksheetOwner,
-    worksheets.loadWorksheet,
-    worksheets.delete(editServerURL, editServerSecret),
+    usersMW.loadUser,
+    worksheetsMW.mustBeWorksheetOwner,
+    worksheetsMW.loadWorksheet,
+    worksheetsMW.delete(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
 // requires worksheetID in the URL. Does something really nasty to move it in to the body!
 // TODO: this will be made more rational once the dashboard is made in to a single-page app.
 app.get('/edit/:id',
-    function (request, response, next) { request.body.worksheetID = request.params.id; next();}, //YUCK
+    function (request, response, next) {
+        request.body.worksheetID = request.params.id;
+        next();
+    }, //YUCK
     auth.requireAuthenticated('/login.html'),
-    users.loadUser,
-    worksheets.mustBeWorksheetOwner,
-    worksheets.loadWorksheet,
-    worksheets.edit(editServerURL, editServerSecret)
+    usersMW.loadUser,
+    worksheetsMW.mustBeWorksheetOwner,
+    worksheetsMW.loadWorksheet,
+    worksheetsMW.edit(editServerURL, editServerSecret)
+);
+
+app.get('/fork/:newUUID',
+    auth.requireAuthenticated('/login.html'),
+    usersMW.loadUser//,
+//    function (request, response, next) {
+//        worksheets.addWorksheetToDB(request.session.userID, "Cloned worksheet", request.params.newUUID, function (err) {
+//            if (err) return next(err);
+//        });
+//    },
+//    worksheets.edit(editServerURL, editServerSecret)
 );
 
 // ** Views **
@@ -101,8 +119,8 @@ app.get('/delete.html',
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',
     auth.requireAuthenticated('/login.html'),
-    users.loadUser,
-    worksheets.loadAllWorksheets,
+    usersMW.loadUser,
+    worksheetsMW.loadAllWorksheets,
     function (request, response) {
         response.render('dashboard',
             {
