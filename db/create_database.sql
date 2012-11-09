@@ -19,8 +19,7 @@ CREATE TABLE worksheets
   id bigserial PRIMARY KEY,
   name text,
   owner bigint REFERENCES users (id),
-  document_ref uuid,
-  parent bigsint
+  document_ref uuid
 );
 -- An index like this is implicitly created by the constraints.
 -- CREATE INDEX worksheets_id_index ON worksheets (id);

@@ -1,7 +1,9 @@
 var express = require('express'),
+    users = require('./lib/users'),
     usersMW = require('./lib/users-mw'),
+    worksheets = require('./lib/worksheets'),
     worksheetsMW = require('./lib/worksheets-mw'),
-    auth = require('./lib/authentication'),
+    authMW = require('./lib/authentication-mw'),
     sessionStore = require('./lib/session-store');
 
 // configuration variables
@@ -39,11 +41,11 @@ var redirect = function (url) {
 // authentication
 // requires parameters username and password in request body
 app.post('/authenticate',
-    auth.checkCredentials,
+    authMW.checkCredentials,
     redirect('/dashboard.html')
 );
 app.get('/logout',
-    auth.logout,
+    authMW.logout,
     redirect('/login.html')
 );
 // registration
@@ -55,14 +57,14 @@ app.post('/register',
 // worksheets
 // requires parameter name in request body
 app.post('/create',
-    auth.requireAuthenticated('/login.html'),
+    authMW.requireAuthenticated('/login.html'),
     usersMW.loadUser,
     worksheetsMW.create(editServerURL, editServerSecret),
     redirect('/dashboard.html')
 );
 // requires parameter worksheetID in request body
 app.post('/delete',
-    auth.requireAuthenticated('/login.html'),
+    authMW.requireAuthenticated('/login.html'),
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
@@ -76,22 +78,39 @@ app.get('/edit/:id',
         request.body.worksheetID = request.params.id;
         next();
     }, //YUCK
-    auth.requireAuthenticated('/login.html'),
+    authMW.requireAuthenticated('/login.html'),
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.edit(editServerURL, editServerSecret)
+    worksheetsMW.edit(editServerURL, editServerSecret,'edit')
 );
 
 app.get('/fork/:newUUID',
-    auth.requireAuthenticated('/login.html'),
-    usersMW.loadUser//,
-//    function (request, response, next) {
-//        worksheets.addWorksheetToDB(request.session.userID, "Cloned worksheet", request.params.newUUID, function (err) {
-//            if (err) return next(err);
-//        });
-//    },
-//    worksheets.edit(editServerURL, editServerSecret)
+    function (request, response, next) {
+        if (request.session.authenticated) {
+            // if the user is logged in, then forking is fairly straightforward. We just add the document to their
+            // account and direct them to the editor.
+            worksheets.addWorksheetToDB(
+                request.session.userID,
+                "Cloned worksheet",
+                request.params.newUUID,
+                function (err, newID) {
+                    if (err) return next(err);
+                    worksheets.loadWorksheet(newID, function (err, worksheet) {
+                        if (err) next(err);
+                        response.locals.worksheet = worksheet;
+                        worksheetsMW.edit(editServerURL, editServerSecret, 'edit')(request, response, next);
+                    });
+                }
+            );
+        } else {
+            // if they're not logged in we send them to the editor in anonEdit mode
+            // TODO: CHEEZY HACK
+            response.locals.worksheet = {};
+            response.locals.worksheet.documentRef = request.params.newUUID;
+            worksheetsMW.edit(editServerURL, editServerSecret, 'anonEdit')(request, response, next);
+        }
+    }
 );
 
 // ** Views **
@@ -118,7 +137,7 @@ app.get('/delete.html',
 
 // The main dashboard view - the heart of the app
 app.get('/dashboard.html',
-    auth.requireAuthenticated('/login.html'),
+    authMW.requireAuthenticated('/login.html'),
     usersMW.loadUser,
     worksheetsMW.loadAllWorksheets,
     function (request, response) {
