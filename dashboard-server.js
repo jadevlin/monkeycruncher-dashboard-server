@@ -10,7 +10,7 @@ var express = require('express'),
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
 var editServerURL = process.env.EDIT_SERVER_URL || "http://edit-server.localhost:5050/";
-var editServerSecret = process.env.EDIT_SERVER_SECRET || "a secret for inter-app communication";
+var sharedSecret = process.env.SHARED_SECRET || "a secret for inter-app communication";
 
 // configure the server
 var app = express();
@@ -42,6 +42,22 @@ var redirect = function (url) {
 // requires parameters username and password in request body
 app.post('/authenticate',
     authMW.checkCredentials,
+    function (request, response, next) {
+        // TODO: more cheeziness - this time checking for whether we should be saving the worksheet
+        if (request.query.uuid){
+            // TODO: HORROR!!!
+            worksheets.addWorksheetToDB(
+                request.session.userID,
+                "Cloned worksheet",
+                request.query.uuid,
+                function (err) {
+                    if (err) return next(err);
+                    return response.redirect('/dashboard.html');
+                }
+            );
+        }
+        else next();
+    },
     redirect('/dashboard.html')
 );
 app.get('/logout',
@@ -59,7 +75,7 @@ app.post('/register',
 app.post('/create',
     authMW.requireAuthenticated('/login.html'),
     usersMW.loadUser,
-    worksheetsMW.create(editServerURL, editServerSecret),
+    worksheetsMW.create(editServerURL, sharedSecret),
     redirect('/dashboard.html')
 );
 // requires parameter worksheetID in request body
@@ -68,7 +84,7 @@ app.post('/delete',
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.delete(editServerURL, editServerSecret),
+    worksheetsMW.delete(editServerURL, sharedSecret),
     redirect('/dashboard.html')
 );
 // requires worksheetID in the URL. Does something really nasty to move it in to the body!
@@ -82,7 +98,7 @@ app.get('/edit/:id',
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.edit(editServerURL, editServerSecret,'edit')
+    worksheetsMW.edit(editServerURL, sharedSecret,'edit')
 );
 
 app.get('/fork/:newUUID',
@@ -90,26 +106,46 @@ app.get('/fork/:newUUID',
         if (request.session.authenticated) {
             // if the user is logged in, then forking is fairly straightforward. We just add the document to their
             // account and direct them to the editor.
-            worksheets.addWorksheetToDB(
-                request.session.userID,
-                "Cloned worksheet",
-                request.params.newUUID,
-                function (err, newID) {
-                    if (err) return next(err);
-                    worksheets.loadWorksheet(newID, function (err, worksheet) {
-                        if (err) next(err);
-                        response.locals.worksheet = worksheet;
-                        worksheetsMW.edit(editServerURL, editServerSecret, 'edit')(request, response, next);
-                    });
-                }
-            );
+            saveWorksheet(request, response, next);
         } else {
             // if they're not logged in we send them to the editor in anonEdit mode
             // TODO: CHEEZY HACK
             response.locals.worksheet = {};
             response.locals.worksheet.documentRef = request.params.newUUID;
-            worksheetsMW.edit(editServerURL, editServerSecret, 'anonEdit')(request, response, next);
+            worksheetsMW.edit(editServerURL, sharedSecret, 'anonEdit')(request, response, next);
         }
+    }
+);
+
+var saveWorksheet = function (request, response, next) {
+    worksheets.addWorksheetToDB(
+        request.session.userID,
+        "Cloned worksheet",
+        request.params.newUUID,
+        function (err, newID) {
+            if (err) return next(err);
+            worksheets.loadWorksheet(newID, function (err, worksheet) {
+                if (err) next(err);
+                response.locals.worksheet = worksheet;
+                worksheetsMW.edit(editServerURL, sharedSecret, 'edit')(request, response, next);
+            });
+        }
+    );
+}
+
+
+app.post('/authorizeSave/:uuid/:token',
+    authMW.requireAdminApp(sharedSecret),
+    function (request, response, next) {
+        // TODO: token authentication for saving not yet implemented.
+        response.json({status: "ok"});
+    }
+);
+
+app.get('/save/:uuid/:token',
+    // TODO: check token.
+    function (request, response, next) {
+        response.redirect('/loginRegister.html?uuid=' + request.params.uuid + '&token=' + request.params.token);
     }
 );
 
@@ -131,6 +167,17 @@ app.get('/delete.html',
     function (request, response) {
         var worksheetID = request.query['worksheetID'];
         response.render('delete', {worksheetID: worksheetID});
+    }
+);
+
+app.get('/loginRegister.html',
+    function (request, response) {
+        var uuid = request.query.uuid;
+        var token = request.query.token;
+        var qString;
+        if (uuid) qString = '?uuid=' + uuid + '&token=' + token;
+        else qString = '';
+        response.render('loginRegister', {qString: qString});
     }
 );
 
