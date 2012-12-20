@@ -1,12 +1,19 @@
-<% var title = "Sign in to MonkeyCruncher ..." %>
-<% include header.html %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign in to MonkeyCruncher</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src='/lib/bootstrap.min.js'></script>
+</head>
 
 <body style='margin-top: 90px;'>
 <div class='container'>
     <div class='row'>
         <div class='span6 offset3'>
-            <form class="form-horizontal" action="/authenticate" method="post">
+            <form class="form-horizontal" id="loginForm">
                 <legend>Sign in to MonkeyCruncher ...</legend>
+                <div><p id="message" class="text-error"></p></div>
                 <div class="control-group">
                     <label class="control-label" for="inputUsername">Username</label>
 
@@ -32,4 +39,20 @@
 </div>
 </body>
 
+<script>
+    $(function () {
+        $('#loginForm').submit( function () {
+            var username = $('#inputUsername').val();
+            var password = $('#inputPassword').val();
+            var body = {username: username, password: password};
+            $.post('/authenticate', body, function(data) {
+                // did login succeed? If so, redirect to dashboard, otherwise give helpful message.
+                if (data.status === 'ok')  window.location.href = '/index.html';
+                else $('#message').html('Username or password incorrect.');
+            },
+            'json');
+            return false;
+        });
+    });
+</script>
 </html>
