@@ -41,6 +41,12 @@ app.post('/logout',
 app.post('/register',
     usersMW.register
 );
+// client configuration
+app.get('/config', function (request, response) {
+    response.json({
+        editServerURL: editServerURL
+    });
+});
 //user
 app.get('/userinfo',
     authMW.requireAuthenticated,

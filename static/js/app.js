@@ -2,6 +2,8 @@ $(function () {
 
     var model = {
 
+        config: {},
+
         user: ko.observable({
             username: undefined
         }),
@@ -20,8 +22,8 @@ $(function () {
             // with the edit server.
             var win = window.open('');
             $.post('/worksheets/authorizeEdit/' + encodeURIComponent(data.id), function (response) {
-                win.location.href = 'http://edit-server.localhost:5050/edit/' +
-                    encodeURIComponent(response.uuid) + '/' + encodeURIComponent(response.token);
+                win.location.href = model.config.editServerURL + 'edit/' + encodeURIComponent(response.uuid) +
+                    '/' + encodeURIComponent(response.token);
             });
         }),
 
@@ -62,6 +64,12 @@ $(function () {
         );
     };
 
+    // Load configuration information from the server and start the application.
+    $.getJSON('/config', function(data) {
+        model.config = data;
+        ko.applyBindings(model);
+    });
+
     // contact the server and get the user information and worksheet list
     getAuthenticatedJSON('/userinfo', function (data) {
         model.user(data);
@@ -70,6 +78,5 @@ $(function () {
         model.worksheets(data);
     });
 
-    ko.applyBindings(model);
 
 });
