@@ -35,7 +35,7 @@ $(function () {
         $.getJSON(url,function (data, statusText, jqXHR) {
             callback(data, statusText, jqXHR);
         }).fail(function (jqXHR) {
-                if (jqXHR.status === 401) window.location.href = '/login.html';
+                if (jqXHR.status === 401) $('#loginModal').modal();
             }
         );
     };
