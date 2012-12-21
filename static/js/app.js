@@ -18,15 +18,30 @@ $(function () {
 
         }),
 
+        // TODO: these handlers for the dialogs are a bit messy. Think about separating stuff out better.
         deleteWorksheet: (function (data) {
-            console.log(data);
+            // attach the event handler here so we have the worksheet data in the closure
+            $('#deleteWorksheetButton').click( function() {
+                $.post('/worksheets/delete/' + encodeURIComponent(data.id), function () {
+                    $('#deleteWorksheetModal').modal('hide');
+                    model.worksheets.remove(data);
+                })
+            });
+            $('#worksheetForDeletionName').text(data.name);
+            $('#deleteWorksheetModal').modal();
         }),
 
-        createWorksheet: (function (data) {
-
+        createWorksheet: (function () {
+            $('#createWorksheetModal').modal();
+            $('#inputWorksheetName').focus();
+        }),
+        createWorksheetConfirm: (function(model) {
+            var name = $('#inputWorksheetName').val();
+            $.post('/worksheets/create/' + encodeURIComponent(name), function (data) {
+                $('#createWorksheetModal').modal('hide');
+                model.worksheets.push(data.worksheet);
+            }, 'json');
         })
-
-
     };
 
     // a helper function for authenticated requests. If any of them should return with an unauthorized status, then
