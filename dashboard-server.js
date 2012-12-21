@@ -36,11 +36,6 @@ app.post('/authenticate',
 app.post('/logout',
     authMW.logout
 );
-// registration
-// requires parameters username, password and email in request body
-app.post('/register',
-    usersMW.register
-);
 // client configuration
 app.get('/config', function (request, response) {
     response.json({
@@ -104,6 +99,18 @@ app.post('/worksheets/authorizeEdit/:id',
 //        );
 //    }
 //);
+
+// Other stuff
+// registration form - not sure this really belongs in the dashboard server, but it'll do for now.
+// requires parameters username, password and email in request body.
+// TODO: at the moment this just takes a simple form and redirects. Could be a bit smoother.
+app.post('/register',
+    usersMW.register,
+    function (request, response) {
+        response.redirect('/registration_success.html');
+    }
+);
+
 
 // start the server
 app.listen(port, function () {
