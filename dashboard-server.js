@@ -72,12 +72,12 @@ app.post('/worksheets/delete/:id',
     worksheetsMW.loadWorksheet,
     worksheetsMW.delete(editServerURL, sharedSecret)
 );
-app.get('/worksheets/edit/:id',
+app.post('/worksheets/authorizeEdit/:id',
     authMW.requireAuthenticated,
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.edit(editServerURL, sharedSecret, 'edit')
+    worksheetsMW.authorizeEdit(editServerURL, sharedSecret)
 );
 
 //app.get('/fork/:newUUID',

@@ -15,13 +15,20 @@ $(function () {
         }),
 
         editWorksheet: (function (data) {
-
+            // We contact the dashboard and instruct it to tell the edit-server that we are authorized
+            // to edit this worksheet. It returns the authorization token that we will use to authenticate
+            // with the edit server.
+            var win = window.open('');
+            $.post('/worksheets/authorizeEdit/' + encodeURIComponent(data.id), function (response) {
+                win.location.href = 'http://edit-server.localhost:5050/edit/' +
+                    encodeURIComponent(response.uuid) + '/' + encodeURIComponent(response.token);
+            });
         }),
 
         // TODO: these handlers for the dialogs are a bit messy. Think about separating stuff out better.
         deleteWorksheet: (function (data) {
             // attach the event handler here so we have the worksheet data in the closure
-            $('#deleteWorksheetButton').click( function() {
+            $('#deleteWorksheetButton').click(function () {
                 $.post('/worksheets/delete/' + encodeURIComponent(data.id), function () {
                     $('#deleteWorksheetModal').modal('hide');
                     model.worksheets.remove(data);
@@ -35,7 +42,7 @@ $(function () {
             $('#createWorksheetModal').modal();
             $('#inputWorksheetName').focus();
         }),
-        createWorksheetConfirm: (function(model) {
+        createWorksheetConfirm: (function (model) {
             var name = $('#inputWorksheetName').val();
             $.post('/worksheets/create/' + encodeURIComponent(name), function (data) {
                 $('#createWorksheetModal').modal('hide');
