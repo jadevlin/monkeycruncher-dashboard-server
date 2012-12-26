@@ -1,21 +1,27 @@
 $(function () {
 
+    // the viewmodel for the page, has config info, user info, and the list of worksheets.
     var model = {
 
+        // this will be loaded from the server on app start-up
         config: {},
 
+        // the logged in user's details
         user: ko.observable({
             username: undefined
         }),
 
+        // the list of worksheets on the user's account
         worksheets: ko.observableArray([]),
 
+        // handler for the logout button
         logout: (function () {
             $.post('/logout', function () {
                 window.location.href = '/login.html';
             })
         }),
 
+        // handler for the worksheet edit links
         editWorksheet: (function (data) {
             // We contact the dashboard and instruct it to tell the edit-server that we are authorized
             // to edit this worksheet. It returns the authorization token that we will use to authenticate
@@ -27,31 +33,42 @@ $(function () {
             });
         }),
 
-        // TODO: these handlers for the dialogs are a bit messy. Think about separating stuff out better.
+        // handler for worksheet deletion.
         deleteWorksheet: (function (data) {
-            // attach the event handler here so we have the worksheet data in the closure
-            $('#deleteWorksheetButton').click(function () {
-                $.post('/worksheets/delete/' + encodeURIComponent(data.id), function () {
-                    $('#deleteWorksheetModal').modal('hide');
-                    model.worksheets.remove(data);
-                })
-            });
-            $('#worksheetForDeletionName').text(data.name);
-            $('#deleteWorksheetModal').modal();
+            bootbox.dialog(
+                "<p>Are you sure you want to delete this worksheet?</p><p class='text-error'>" + data.name + "</p>",
+                [
+                    {
+                        label: 'No'
+                    },
+                    {
+                        label: 'Yes, delete',
+                        class: 'btn-danger',
+                        callback: (function (result) {
+                            // contact the dashboard server to remove the worksheet and update the UI
+                            $.post('/worksheets/delete/' + encodeURIComponent(data.id), function () {
+                                $('#deleteWorksheetModal').modal('hide');
+                                model.worksheets.remove(data);
+                            });
+                        })
+                    }
+                ],
+                {header: "Are you sure?"});
         }),
 
+        // handler for the worksheet create button
         createWorksheet: (function () {
-            $('#createWorksheetModal').modal();
-            $('#inputWorksheetName').focus();
-        }),
-        createWorksheetConfirm: (function (model) {
-            var name = $('#inputWorksheetName').val();
-            $.post('/worksheets/create/' + encodeURIComponent(name), function (data) {
-                $('#createWorksheetModal').modal('hide');
-                model.worksheets.push(data.worksheet);
-            }, 'json');
+            bootbox.prompt("Worksheet name", function(result) {
+                if (result !== "" && result !== null) {
+                    // contact the dashboard server to add the worksheet, and update the UI
+                    $.post('/worksheets/create/' + encodeURIComponent(result), function (data) {
+                        model.worksheets.push(data.worksheet);
+                    }, 'json');
+                }
+            })
         })
     };
+
 
     // a helper function for authenticated requests. If any of them should return with an unauthorized status, then
     // the browser is redirected to the login page.
@@ -65,7 +82,7 @@ $(function () {
     };
 
     // Load configuration information from the server and start the application.
-    $.getJSON('/config', function(data) {
+    $.getJSON('/config', function (data) {
         model.config = data;
         ko.applyBindings(model);
     });
