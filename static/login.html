@@ -41,16 +41,19 @@
 
 <script>
     $(function () {
-        $('#loginForm').submit( function () {
+        $('#loginForm').submit(function () {
             var username = $('#inputUsername').val();
             var password = $('#inputPassword').val();
             var body = {username: username, password: password};
-            $.post('/authenticate', body, function(data) {
-                // did login succeed? If so, redirect to dashboard, otherwise give helpful message.
-                if (data.status === 'ok')  window.location.href = '/index.html';
-                else $('#message').html('Username or password incorrect.');
-            },
-            'json');
+            $.post('/authenticate', body,
+                function (data) {
+                    // did login succeed? If so, redirect to dashboard, otherwise give helpful message.
+                    // The /authenticate API call will pass us an anti-CSRF token that we must pass to
+                    // the dashboard for it to use in the API calls.
+                    if (data.status === 'ok')  window.location.href = '/index.html?_csrf=' + data._csrf;
+                    else $('#message').html('Username or password incorrect.');
+                },
+                'json');
             return false;
         });
     });
