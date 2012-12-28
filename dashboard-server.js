@@ -25,7 +25,6 @@ app.use(app.router);
 app.use(express.static(__dirname + '/static'));
 app.use(express.errorHandler());
 
-
 // ** Client-facing API **
 
 // authentication
@@ -80,25 +79,27 @@ app.post('/worksheets/authorizeEdit/:id',
     worksheetsMW.loadWorksheet,
     worksheetsMW.authorizeEdit(editServerURL, sharedSecret)
 );
+app.get('/worksheets/claim/:uuid');
 
-//app.get('/fork/:newUUID',
-//    authMW.requireAuthenticated,
-//    function (request, response, next) {
-//        worksheets.addWorksheetToDB(
-//            request.session.userID,
-//            "Cloned worksheet",
-//            request.params.newUUID,
-//            function (err, newID) {
-//                if (err) return next(err);
-//                worksheets.loadWorksheet(newID, function (err, worksheet) {
-//                    if (err) next(err);
-//                    response.locals.worksheet = worksheet;
-//                    worksheetsMW.edit(editServerURL, sharedSecret, 'edit')(request, response, next);
-//                });
-//            }
-//        );
-//    }
-//);
+// ** Private API **
+
+app.get('/registerFork/:newUUID/:oldUUID',
+    authMW.requireAdminApp(sharedSecret),
+    function (request, response, next) {
+        worksheets.addWorksheetToDB(
+            request.session.userID,
+            "Cloned worksheet",
+            request.params.newUUID,
+            function (err, newID) {
+                if (err) return next(err);
+                worksheets.loadWorksheet(newID, function (err, worksheet) {
+                    if (err) next(err);
+                    response.locals.worksheet = worksheet;
+                    worksheetsMW.edit(editServerURL, sharedSecret, 'edit')(request, response, next);
+                });
+            });
+    }
+);
 
 // Other stuff
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.

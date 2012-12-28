@@ -33,6 +33,10 @@ $(function () {
             });
         }),
 
+        forkWorksheet: (function (data) {
+
+        }),
+
         // handler for worksheet deletion.
         deleteWorksheet: (function (data) {
             bootbox.dialog(
