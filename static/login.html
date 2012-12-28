@@ -46,14 +46,18 @@
             var password = $('#inputPassword').val();
             var body = {username: username, password: password};
             $.post('/authenticate', body,
-                function (data) {
-                    // did login succeed? If so, redirect to dashboard, otherwise give helpful message.
-                    // The /authenticate API call will pass us an anti-CSRF token that we must pass to
-                    // the dashboard for it to use in the API calls.
-                    if (data.status === 'ok')  window.location.href = '/index.html?_csrf=' + data._csrf;
-                    else $('#message').html('Username or password incorrect.');
-                },
-                'json');
+                    function (data) {
+                        // did login succeed? If so, redirect to dashboard, otherwise give a helpful message.
+                        // The /authenticate API call will pass us an anti-CSRF token that we must pass to
+                        // the dashboard for it to use in the API calls.
+                        if (data.status === 'ok')  window.location.href = '/index.html?_csrf=' + data._csrf;
+                        else $('#message').html('Something went wrong - please try again.');
+                    },
+                    'json'
+            ).fail(function () {
+                        $('#message').html('Incorrect username or password.');
+                    }
+            );
             return false;
         });
     });
