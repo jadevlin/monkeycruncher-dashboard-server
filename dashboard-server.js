@@ -86,18 +86,7 @@ app.get('/worksheets/claim/:uuid');
 app.get('/registerFork/:newUUID/:oldUUID',
     authMW.requireAdminApp(sharedSecret),
     function (request, response, next) {
-        worksheets.addWorksheetToDB(
-            request.session.userID,
-            "Cloned worksheet",
-            request.params.newUUID,
-            function (err, newID) {
-                if (err) return next(err);
-                worksheets.loadWorksheet(newID, function (err, worksheet) {
-                    if (err) next(err);
-                    response.locals.worksheet = worksheet;
-                    worksheetsMW.edit(editServerURL, sharedSecret, 'edit')(request, response, next);
-                });
-            });
+        response.json({status: 'ok'});
     }
 );
 
