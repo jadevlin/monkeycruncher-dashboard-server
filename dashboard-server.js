@@ -83,11 +83,9 @@ app.get('/worksheets/claim/:uuid');
 
 // ** Private API **
 
-app.get('/registerFork/:newUUID/:oldUUID',
+app.post('/registerFork/:newUUID/:oldUUID',
     authMW.requireAdminApp(sharedSecret),
-    function (request, response, next) {
-        response.json({status: 'ok'});
-    }
+    worksheetsMW.registerFork
 );
 
 // Other stuff

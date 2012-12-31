@@ -69,7 +69,10 @@ $(function () {
                     });
                 }
             })
-        })
+        }),
+
+        // handler for worksheet claiming
+        claimWorksheet: (function () {})
     };
 
 
