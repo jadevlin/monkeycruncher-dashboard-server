@@ -40,18 +40,18 @@ $(function () {
         // handler for worksheet deletion.
         removeWorksheet: (function (data) {
             bootbox.dialog(
-                "<p>Are you sure you want to remove this worksheet from your account?</p>" +
+                "<p>Are you sure you want to delete this worksheet?</p>" +
                     "<p class='text-error'>" + data.name + "</p>",
                 [
                     {
                         label: 'No'
                     },
                     {
-                        label: 'Yes, remove',
+                        label: 'Yes, delete',
                         class: 'btn-danger',
                         callback: (function () {
                             // contact the dashboard server to remove the worksheet and update the UI
-                            postAuthenticated('/worksheets/remove/' + encodeURIComponent(data.id), function () {
+                            postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id), function () {
                                 model.worksheets.remove(data);
                             });
                         })

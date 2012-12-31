@@ -64,12 +64,12 @@ app.post('/worksheets/create/:name',
     usersMW.loadUser,
     worksheetsMW.create(editServerURL, sharedSecret)
 );
-app.post('/worksheets/remove/:id',
+app.post('/worksheets/delete/:id',
     authMW.requireAuthenticated,
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.remove(editServerURL, sharedSecret)
+    worksheetsMW.delete(editServerURL, sharedSecret)
 );
 app.post('/worksheets/authorizeEdit/:id',
     authMW.requireAuthenticated,
