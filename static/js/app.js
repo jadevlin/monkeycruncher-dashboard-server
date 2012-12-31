@@ -38,19 +38,20 @@ $(function () {
         }),
 
         // handler for worksheet deletion.
-        deleteWorksheet: (function (data) {
+        removeWorksheet: (function (data) {
             bootbox.dialog(
-                "<p>Are you sure you want to delete this worksheet?</p><p class='text-error'>" + data.name + "</p>",
+                "<p>Are you sure you want to remove this worksheet from your account?</p>" +
+                    "<p class='text-error'>" + data.name + "</p>",
                 [
                     {
                         label: 'No'
                     },
                     {
-                        label: 'Yes, delete',
+                        label: 'Yes, remove',
                         class: 'btn-danger',
                         callback: (function () {
                             // contact the dashboard server to remove the worksheet and update the UI
-                            postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id), function () {
+                            postAuthenticated('/worksheets/remove/' + encodeURIComponent(data.id), function () {
                                 model.worksheets.remove(data);
                             });
                         })
@@ -72,7 +73,17 @@ $(function () {
         }),
 
         // handler for worksheet claiming
-        claimWorksheet: (function () {})
+        claimWorksheet: (function () {
+            bootbox.prompt("Worksheet password", function (result) {
+                if (result !=="" && result !== null) {
+                    postAuthenticated('/worksheets/claim/' + encodeURIComponent(result), function (data) {
+                        if (data.status === 'ok') model.worksheets.push(data.worksheet);
+                        else bootbox.alert("It was not possible to claim the worksheet. Please check that the " +
+                            "password is correct. Note that unclaimed worksheets are deleted after a few days.");
+                    })
+                }
+            })
+        })
     };
 
 

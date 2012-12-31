@@ -18,7 +18,8 @@ CREATE TABLE worksheets
   owner bigint REFERENCES users (id),
   parent bigserial REFERENCES worksheets (id),
   last_edited TIMESTAMP,
-  document_ref uuid
+  document_ref uuid,
+  deleted boolean
 );
 ALTER TABLE worksheets
   ALTER COLUMN owner DROP NOT NULL,
