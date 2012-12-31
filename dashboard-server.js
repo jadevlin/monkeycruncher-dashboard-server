@@ -1,7 +1,6 @@
 var express = require('express'),
     users = require('./lib/users'),
     usersMW = require('./lib/users-mw'),
-    worksheets = require('./lib/worksheets'),
     worksheetsMW = require('./lib/worksheets-mw'),
     authMW = require('./lib/authentication-mw'),
     sessionStore = require('./lib/session-store');
@@ -79,7 +78,11 @@ app.post('/worksheets/authorizeEdit/:id',
     worksheetsMW.loadWorksheet,
     worksheetsMW.authorizeEdit(editServerURL, sharedSecret)
 );
-app.get('/worksheets/claim/:uuid');
+app.post('/worksheets/claim/:uuid',
+    authMW.requireAuthenticated,
+    usersMW.loadUser,
+    worksheetsMW.claim
+);
 
 // ** Private API **
 
@@ -88,7 +91,7 @@ app.post('/registerFork/:newUUID/:oldUUID',
     worksheetsMW.registerFork
 );
 
-// Other stuff
+// ** Other stuff **
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.
 // requires parameters username, password and email in request body.
 // TODO: at the moment this just takes a simple form and redirects. Could be a bit smoother.
