@@ -14,6 +14,7 @@
     <script src="/lib/bootstrap.min.js"></script>
     <script src="/lib/bootbox.min.js"></script>
     <script src="/lib/knockout-2.2.0.min.js"></script>
+    <script src="/lib/moment.min.js"></script>
     <script src="/js/app.js"></script>
 </head>
 
@@ -41,22 +42,28 @@
             <h1 style='padding-top: 40px'>Your worksheets</h1>
         </div>
     </div>
-    <div class='row'>
-        <div class='span12'>
-            <table class="table table-striped table-bordered">
-                <tbody data-bind="foreach: worksheets">
-                <tr>
-                    <td>
-                        <a target="_blank" data-bind='text: name, click: $parent.editWorksheet'></a>
-                        <span class='pull-right'>
-                            <a class='btn btn-mini'>Share</a>
-                            <a class='btn btn-mini btn-success' data-bind="click: $parent.forkWorksheet">Edit a copy</a>
-                            <a class='btn btn-mini btn-danger' data-bind='click: $parent.removeWorksheet'>Delete</a>
+    <div class="accordion" id="worksheetAcc" data-bind="foreach: worksheets">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#worksheetAcc"
+                   data-bind="attr: {href: '#collapse' + $index()}">
+                    <span data-bind='text: name'></span>
+                    <small>
+                        <span class='pull-right' data-bind="text: 'Last edited ' + moment(lastEdited()).fromNow()">
                         </span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </small>
+                </a>
+            </div>
+            <div data-bind="attr: {id: 'collapse' + $index()}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <a class='btn btn-mini btn-success' data-bind="click: $parent.editWorksheet">Edit</a>
+                    <a class='btn btn-mini' data-bind="click: $parent.renameWorksheet">Rename</a>
+                    <a class='btn btn-mini'>Share</a>
+                    <span class='pull-right'>
+                        <a class='btn btn-mini btn-danger' data-bind='click: $parent.removeWorksheet'>Delete</a>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div class='row'>

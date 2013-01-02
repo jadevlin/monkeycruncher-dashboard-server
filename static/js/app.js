@@ -40,8 +40,17 @@ $(function () {
             });
         }),
 
-        forkWorksheet: (function (data) {
-
+        renameWorksheet: (function (data) {
+            bootbox.prompt("New worksheet name", "Cancel", "Rename", function (result) {
+                if (result !== "" && result !== null) {
+                    // contact the dashboard server to rename the worksheet, and update the UI
+                    postAuthenticated(
+                        '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
+                        function () {
+                            data.name(result);
+                        });
+                }
+            }, data.name())
         }),
 
         // handler for worksheet deletion.
@@ -73,7 +82,7 @@ $(function () {
                 if (result !== "" && result !== null) {
                     // contact the dashboard server to add the worksheet, and update the UI
                     postAuthenticated('/worksheets/create/' + encodeURIComponent(result), function (data) {
-                        model.worksheets.push(data.worksheet);
+                        model.worksheets.unshift(makeWorksheetModel(data.worksheet));
                     });
                 }
             })
@@ -82,9 +91,9 @@ $(function () {
         // handler for worksheet claiming
         claimWorksheet: (function () {
             bootbox.prompt("Worksheet password", function (result) {
-                if (result !=="" && result !== null) {
+                if (result !== "" && result !== null) {
                     postAuthenticated('/worksheets/claim/' + encodeURIComponent(result), function (data) {
-                        if (data.status === 'ok') model.worksheets.push(data.worksheet);
+                        if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
                         else bootbox.alert("It was not possible to claim the worksheet. Please check that the " +
                             "password is correct. Note that unclaimed worksheets are deleted after a few days.");
                     })
@@ -98,7 +107,7 @@ $(function () {
     // the browser is redirected to the login page. This call will append the anti-CSRF token from the model's config
     // as a query parameter.
     var getAuthenticatedJSON = function (url, callback) {
-        $.getJSON(url + '?_csrf=' + model.config._csrf, function (data, statusText, jqXHR) {
+        $.getJSON(url + '?_csrf=' + model.config._csrf,function (data, statusText, jqXHR) {
             callback(data, statusText, jqXHR);
         }).fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
@@ -107,7 +116,7 @@ $(function () {
     };
     // a similar helper for authenticated POSTs.
     var postAuthenticated = function (url, callback) {
-        $.post(url + '?_csrf=' + model.config._csrf, function (data, statusText, jqXHR) {
+        $.post(url + '?_csrf=' + model.config._csrf,function (data, statusText, jqXHR) {
             callback(data, statusText, jqXHR);
         }, 'json').fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
@@ -121,6 +130,16 @@ $(function () {
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
     };
 
+    // takes a JSON worksheet from the server and turns it into an observable KO model
+    var makeWorksheetModel = function (wsJSON) {
+        var wsModel = {};
+        wsModel.id = wsJSON.id;
+        wsModel.name = ko.observable(wsJSON.name);
+        wsModel.owner = wsJSON.owner;
+        wsModel.parent = wsJSON.parent;
+        wsModel.lastEdited = ko.observable(wsJSON.lastEdited);
+        return wsModel;
+    };
 
     // Load configuration information from the server and start the application.
     $.getJSON('/config', function (data) {
@@ -134,7 +153,7 @@ $(function () {
             model.user(data);
         });
         getAuthenticatedJSON('/worksheets', function (data) {
-            model.worksheets(data);
+            model.worksheets(data.map(makeWorksheetModel));
         });
 
         ko.applyBindings(model);
