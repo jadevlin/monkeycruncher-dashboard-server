@@ -78,6 +78,12 @@ app.post('/worksheets/delete/:id',
     worksheetsMW.loadWorksheet,
     worksheetsMW.delete(editServerURL, sharedSecret)
 );
+app.post('/worksheets/rename/:id/:newName',
+    authMW.requireAuthenticated,
+    usersMW.loadUser,
+    worksheetsMW.mustBeWorksheetOwner,
+    worksheetsMW.rename
+);
 app.post('/worksheets/authorizeEdit/:id',
     authMW.requireAuthenticated,
     usersMW.loadUser,

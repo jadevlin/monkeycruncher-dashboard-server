@@ -140,5 +140,7 @@ $(function () {
         ko.applyBindings(model);
     });
 
+    // for easier debugging
+    window.mcDashboardModel = model;
 
 });
