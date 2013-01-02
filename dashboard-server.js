@@ -17,10 +17,16 @@ var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
 var editServerURL = process.env.EDIT_SERVER_URL || "http://edit-server.localhost:5050/";
 var sharedSecret = process.env.SHARED_SECRET || "a secret for inter-app communication";
+var secureOnly = process.env.SECURE_ONLY || false;
 
 // configure the server
 var app = express();
 app.enable("trust proxy");
+// in production we only allow secure connections, controlled by the SECURE_ONLY environment variable.
+if (secureOnly) app.use(function (request, response, next) {
+    if (request.secure) next();
+    else response.text("Please use the secure (https) site!");
+});
 // default middleware
 app.use(express.favicon());
 app.use(express.logger());
