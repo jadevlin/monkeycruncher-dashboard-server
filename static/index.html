@@ -58,12 +58,15 @@
                     </div>
                     <div data-bind="attr: {id: 'collapse' + $index()}" class="accordion-body collapse">
                         <div class="accordion-inner">
-                            <p>Number of copies: ?</p>
-
                             <p>Number of views: ?</p>
+                            <p>Number of copies: ?</p>
+                            <p>Link for sharing (read-only):
+                                <a target="_blank"
+                                   data-bind="text: viewLink, attr: {href: viewLink}"></a>
+                            </p>
+                            <hr/>
                             <a class='btn btn-mini btn-success' data-bind="click: $parent.editWorksheet">Edit</a>
                             <a class='btn btn-mini' data-bind="click: $parent.renameWorksheet">Rename</a>
-                            <a class='btn btn-mini'>Share</a>
                     <span class='pull-right'>
                         <a class='btn btn-mini btn-danger' data-bind='click: $parent.removeWorksheet'>Delete</a>
                     </span>

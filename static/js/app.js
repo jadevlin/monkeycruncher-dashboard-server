@@ -144,6 +144,9 @@ $(function () {
         wsModel.owner = wsJSON.owner;
         wsModel.parent = wsJSON.parent;
         wsModel.lastEdited = ko.observable(wsJSON.lastEdited);
+        wsModel.documentRef = wsJSON.documentRef;
+        // it's convenient to construct this here, rather than in the markup
+        wsModel.viewLink = model.config.editServerURL + 'view/' + wsModel.documentRef;
         return wsModel;
     };
 
