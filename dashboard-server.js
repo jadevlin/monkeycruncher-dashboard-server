@@ -25,7 +25,7 @@ app.enable("trust proxy");
 // in production we only allow secure connections, controlled by the SECURE_ONLY environment variable.
 if (secureOnly) app.use(function (request, response, next) {
     if (request.secure) next();
-    else response.text("Please use the secure (https) site!");
+    else response.html("Please use the secure (https) site!");
 });
 // default middleware
 app.use(express.favicon());
