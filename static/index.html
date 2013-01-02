@@ -39,29 +39,36 @@
     </div>
     <div class='row'>
         <div class='span12'>
-            <h1 style='padding-top: 40px'>Your worksheets</h1>
+            <h1 style='padding-top: 80px'>Your worksheets</h1>
         </div>
     </div>
-    <div class="accordion" id="worksheetAcc" data-bind="foreach: worksheets">
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#worksheetAcc"
-                   data-bind="attr: {href: '#collapse' + $index()}">
-                    <span data-bind='text: name'></span>
-                    <small>
+    <div class='row'>
+        <div class='span12'>
+            <div class="accordion" id="worksheetAcc" data-bind="foreach: worksheets">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#worksheetAcc"
+                           data-bind="attr: {href: '#collapse' + $index()}">
+                            <span data-bind='text: name'></span>
+                            <small>
                         <span class='pull-right' data-bind="text: 'Last edited ' + moment(lastEdited()).fromNow()">
                         </span>
-                    </small>
-                </a>
-            </div>
-            <div data-bind="attr: {id: 'collapse' + $index()}" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <a class='btn btn-mini btn-success' data-bind="click: $parent.editWorksheet">Edit</a>
-                    <a class='btn btn-mini' data-bind="click: $parent.renameWorksheet">Rename</a>
-                    <a class='btn btn-mini'>Share</a>
+                            </small>
+                        </a>
+                    </div>
+                    <div data-bind="attr: {id: 'collapse' + $index()}" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <p>Number of copies: ?</p>
+
+                            <p>Number of views: ?</p>
+                            <a class='btn btn-mini btn-success' data-bind="click: $parent.editWorksheet">Edit</a>
+                            <a class='btn btn-mini' data-bind="click: $parent.renameWorksheet">Rename</a>
+                            <a class='btn btn-mini'>Share</a>
                     <span class='pull-right'>
                         <a class='btn btn-mini btn-danger' data-bind='click: $parent.removeWorksheet'>Delete</a>
                     </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

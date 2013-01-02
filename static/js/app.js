@@ -37,6 +37,12 @@ $(function () {
             postAuthenticated('/worksheets/authorizeEdit/' + encodeURIComponent(data.id), function (response) {
                 win.location.href = model.config.editServerURL + 'edit/' + encodeURIComponent(response.uuid) +
                     '/' + encodeURIComponent(response.token);
+                // we want to move the current worksheet to the top of the list, and update its last_edited.
+                // This won't quite be in sync with the server, but it doesn't really matter.
+                model.worksheets.remove(data);
+                model.worksheets.unshift(data);
+                // this won't be an ISO 8601 date, like those from the server, but we'll get away with it.
+                data.lastEdited(Date());
             });
         }),
 
@@ -57,7 +63,7 @@ $(function () {
         removeWorksheet: (function (data) {
             bootbox.dialog(
                 "<p>Are you sure you want to delete this worksheet?</p>" +
-                    "<p class='text-error'>" + data.name + "</p>",
+                    "<p class='text-error'>" + data.name() + "</p>",
                 [
                     {
                         label: 'No'
