@@ -44,6 +44,9 @@ $(function () {
                     model.worksheets.unshift(data);
                     // this won't be an ISO 8601 date, like those from the server, but we'll get away with it.
                     data.lastEdited(Date());
+                },
+                function () {
+                    bootbox.alert("There was a server problem while authorizing the edit.");
                 });
         }),
 
@@ -56,7 +59,11 @@ $(function () {
                             '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
                             function () {
                                 data.name(result);
-                            });
+                            },
+                            function () {
+                                bootbox.alert("There was a server problem executing the rename request.");
+                            }
+                        );
                     }
                 }, data.name())
         }),
@@ -75,9 +82,13 @@ $(function () {
                         class: 'btn-danger',
                         callback: (function () {
                             // contact the dashboard server to remove the worksheet and update the UI
-                            postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id), function () {
-                                model.worksheets.remove(data);
-                            });
+                            postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id),
+                                function () {
+                                    model.worksheets.remove(data);
+                                },
+                                function () {
+                                    bootbox.alert("There was a server problem while deleting the worksheet.");
+                                });
                         })
                     }
                 ],
@@ -90,9 +101,13 @@ $(function () {
                 function (result) {
                     if (result !== "" && result !== null) {
                         // contact the dashboard server to add the worksheet, and update the UI
-                        postAuthenticated('/worksheets/create/' + encodeURIComponent(result), function (data) {
-                            model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                        });
+                        postAuthenticated('/worksheets/create/' + encodeURIComponent(result),
+                            function (data) {
+                                model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                            },
+                            function () {
+                                bootbox.alert("There was a server problem while creating the worksheet.");
+                            });
                     }
                 })
         }),
@@ -102,13 +117,18 @@ $(function () {
             bootbox.prompt("Worksheet password",
                 function (result) {
                     if (result !== "" && result !== null) {
-                        postAuthenticated('/worksheets/claim/' + encodeURIComponent(result), function (data) {
-                            if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                            else bootbox.alert("It was not possible to claim the worksheet. Please check that the " +
-                                "password is correct. Note that unclaimed worksheets are deleted after a few days.");
-                        })
+                        postAuthenticated('/worksheets/claim/' + encodeURIComponent(result),
+                            function (data) {
+                                if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                                else bootbox.alert("It was not possible to claim the worksheet. Please check" +
+                                    " that the password is correct. Note that unclaimed worksheets are deleted" +
+                                    " after a few days.");
+                            },
+                            function () {
+                                bootbox.alert("There was a server problem while claiming the worksheet.");
+                            })
                     }
-                })
+                });
         })
     };
 
@@ -116,24 +136,26 @@ $(function () {
     // a helper function for authenticated JSON GETs. If any of them should return with an unauthorized status, then
     // the browser is redirected to the login page. This call will append the anti-CSRF token from the model's config
     // as a query parameter.
-    var getAuthenticatedJSON = function (url, callback) {
+    var getAuthenticatedJSON = function (url, callback, failCallback) {
         $.getJSON(url + '?_csrf=' + model.config._csrf,
             function (data, statusText, jqXHR) {
                 callback(data, statusText, jqXHR);
             }
         ).fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
+                else failCallback();
             }
         );
     };
     // a similar helper for authenticated POSTs.
-    var postAuthenticated = function (url, callback) {
-        $.post(url + '?_csrf=' + model.config._csrf,
+    var postAuthenticated = function (url, callback, failCallback) {
+        return $.post(url + '?_csrf=' + model.config._csrf,
             function (data, statusText, jqXHR) {
                 callback(data, statusText, jqXHR);
             }, 'json'
         ).fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
+                else failCallback();
             }
         );
     };
