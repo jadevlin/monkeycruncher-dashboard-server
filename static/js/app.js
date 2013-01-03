@@ -34,29 +34,31 @@ $(function () {
             // to edit this worksheet. It returns the authorization token that we will use to authenticate
             // with the edit server.
             var win = window.open('');
-            postAuthenticated('/worksheets/authorizeEdit/' + encodeURIComponent(data.id), function (response) {
-                win.location.href = model.config.editServerURL + 'edit/' + encodeURIComponent(response.uuid) +
-                    '/' + encodeURIComponent(response.token);
-                // we want to move the current worksheet to the top of the list, and update its last_edited.
-                // This won't quite be in sync with the server, but it doesn't really matter.
-                model.worksheets.remove(data);
-                model.worksheets.unshift(data);
-                // this won't be an ISO 8601 date, like those from the server, but we'll get away with it.
-                data.lastEdited(Date());
-            });
+            postAuthenticated('/worksheets/authorizeEdit/' + encodeURIComponent(data.id),
+                function (response) {
+                    win.location.href = model.config.editServerURL + 'edit/' + encodeURIComponent(response.uuid) +
+                        '/' + encodeURIComponent(response.token);
+                    // we want to move the current worksheet to the top of the list, and update its last_edited.
+                    // This won't quite be in sync with the server, but it doesn't really matter.
+                    model.worksheets.remove(data);
+                    model.worksheets.unshift(data);
+                    // this won't be an ISO 8601 date, like those from the server, but we'll get away with it.
+                    data.lastEdited(Date());
+                });
         }),
 
         renameWorksheet: (function (data) {
-            bootbox.prompt("New worksheet name", "Cancel", "Rename", function (result) {
-                if (result !== "" && result !== null) {
-                    // contact the dashboard server to rename the worksheet, and update the UI
-                    postAuthenticated(
-                        '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
-                        function () {
-                            data.name(result);
-                        });
-                }
-            }, data.name())
+            bootbox.prompt("New worksheet name", "Cancel", "Rename",
+                function (result) {
+                    if (result !== "" && result !== null) {
+                        // contact the dashboard server to rename the worksheet, and update the UI
+                        postAuthenticated(
+                            '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
+                            function () {
+                                data.name(result);
+                            });
+                    }
+                }, data.name())
         }),
 
         // handler for worksheet deletion.
@@ -84,27 +86,29 @@ $(function () {
 
         // handler for the worksheet create button
         createWorksheet: (function () {
-            bootbox.prompt("Worksheet name", function (result) {
-                if (result !== "" && result !== null) {
-                    // contact the dashboard server to add the worksheet, and update the UI
-                    postAuthenticated('/worksheets/create/' + encodeURIComponent(result), function (data) {
-                        model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                    });
-                }
-            })
+            bootbox.prompt("Worksheet name",
+                function (result) {
+                    if (result !== "" && result !== null) {
+                        // contact the dashboard server to add the worksheet, and update the UI
+                        postAuthenticated('/worksheets/create/' + encodeURIComponent(result), function (data) {
+                            model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                        });
+                    }
+                })
         }),
 
         // handler for worksheet claiming
         claimWorksheet: (function () {
-            bootbox.prompt("Worksheet password", function (result) {
-                if (result !== "" && result !== null) {
-                    postAuthenticated('/worksheets/claim/' + encodeURIComponent(result), function (data) {
-                        if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                        else bootbox.alert("It was not possible to claim the worksheet. Please check that the " +
-                            "password is correct. Note that unclaimed worksheets are deleted after a few days.");
-                    })
-                }
-            })
+            bootbox.prompt("Worksheet password",
+                function (result) {
+                    if (result !== "" && result !== null) {
+                        postAuthenticated('/worksheets/claim/' + encodeURIComponent(result), function (data) {
+                            if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                            else bootbox.alert("It was not possible to claim the worksheet. Please check that the " +
+                                "password is correct. Note that unclaimed worksheets are deleted after a few days.");
+                        })
+                    }
+                })
         })
     };
 
@@ -113,18 +117,22 @@ $(function () {
     // the browser is redirected to the login page. This call will append the anti-CSRF token from the model's config
     // as a query parameter.
     var getAuthenticatedJSON = function (url, callback) {
-        $.getJSON(url + '?_csrf=' + model.config._csrf,function (data, statusText, jqXHR) {
-            callback(data, statusText, jqXHR);
-        }).fail(function (jqXHR) {
+        $.getJSON(url + '?_csrf=' + model.config._csrf,
+            function (data, statusText, jqXHR) {
+                callback(data, statusText, jqXHR);
+            }
+        ).fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
             }
         );
     };
     // a similar helper for authenticated POSTs.
     var postAuthenticated = function (url, callback) {
-        $.post(url + '?_csrf=' + model.config._csrf,function (data, statusText, jqXHR) {
-            callback(data, statusText, jqXHR);
-        }, 'json').fail(function (jqXHR) {
+        $.post(url + '?_csrf=' + model.config._csrf,
+            function (data, statusText, jqXHR) {
+                callback(data, statusText, jqXHR);
+            }, 'json'
+        ).fail(function (jqXHR) {
                 if (jqXHR.status === 401) $('#loginModal').modal();
             }
         );
