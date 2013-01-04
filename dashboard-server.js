@@ -10,7 +10,8 @@ var express = require('express'),
     usersMW = require('./lib/users-mw'),
     worksheetsMW = require('./lib/worksheets-mw'),
     authMW = require('./lib/authentication-mw'),
-    sessionStore = require('./lib/session-store');
+    sessionStore = require('./lib/session-store'),
+    campfire = require('./lib/campfire');
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -117,6 +118,8 @@ app.post('/registerFork/:newUUID/:oldUUID',
 app.post('/register',
     usersMW.register,
     function (request, response) {
+        campfire.postMessage('New user registration: \nUsername: ' + request.body.username +
+            '\nEmail: ' + request.body.email);
         response.redirect('/registration_success.html');
     }
 );
