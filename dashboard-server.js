@@ -118,8 +118,7 @@ app.post('/registerFork/:newUUID/:oldUUID',
 app.post('/register',
     usersMW.register,
     function (request, response) {
-        campfire.postMessage('New user registration: \nUsername: ' + request.body.username +
-            '\nEmail: ' + request.body.email);
+        campfire.postMessage('New user registration: ' + request.body.username + '<' + request.body.email + '>');
         response.redirect('/registration_success.html');
     }
 );
