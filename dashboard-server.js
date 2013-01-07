@@ -11,13 +11,12 @@ var express = require('express'),
     worksheetsMW = require('./lib/worksheets-mw'),
     authMW = require('./lib/authentication-mw'),
     sessionStore = require('./lib/session-store'),
+    editServer = require('./lib/edit-server-api'),
     campfire = require('./lib/campfire');
 
 // configuration variables
 var port = process.env.PORT || 5000;
 var sessionSecret = process.env.SESSION_SECRET || "a very secret string";
-var editServerURL = process.env.EDIT_SERVER_URL || "http://edit-server.localhost:5050/";
-var sharedSecret = process.env.SHARED_SECRET || "a secret for inter-app communication";
 var secureOnly = process.env.SECURE_ONLY || false;
 
 // configure the server
@@ -51,7 +50,7 @@ app.post('/logout',
 // client configuration
 app.get('/config', function (request, response) {
     response.json({
-        editServerURL: editServerURL
+        editServerURL: editServer.url
     });
 });
 //user
@@ -76,14 +75,14 @@ app.get('/worksheets',
 app.post('/worksheets/create/:name',
     authMW.requireAuthenticated,
     usersMW.loadUser,
-    worksheetsMW.create(editServerURL, sharedSecret)
+    worksheetsMW.create
 );
 app.post('/worksheets/delete/:id',
     authMW.requireAuthenticated,
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.delete(editServerURL, sharedSecret)
+    worksheetsMW.delete
 );
 app.post('/worksheets/rename/:id/:newName',
     authMW.requireAuthenticated,
@@ -96,7 +95,7 @@ app.post('/worksheets/authorizeEdit/:id',
     usersMW.loadUser,
     worksheetsMW.mustBeWorksheetOwner,
     worksheetsMW.loadWorksheet,
-    worksheetsMW.authorizeEdit(editServerURL, sharedSecret)
+    worksheetsMW.authorizeEdit
 );
 app.post('/worksheets/claim/:uuid',
     authMW.requireAuthenticated,
@@ -107,9 +106,12 @@ app.post('/worksheets/claim/:uuid',
 // ** Private API **
 
 app.post('/registerFork/:newUUID/:oldUUID',
-    authMW.requireAdminApp(sharedSecret),
+    editServer.requireEditServer,
     worksheetsMW.registerFork
 );
+
+// ** Public API for website **
+// These calls are not made by the user
 
 // ** Other stuff **
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.
