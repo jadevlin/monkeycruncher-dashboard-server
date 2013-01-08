@@ -12,7 +12,7 @@ var express = require('express'),
     authMW = require('./lib/authentication-mw'),
     sessionStore = require('monkeycruncher-shared-code').sessionStore,
     editServer = require('./lib/edit-server-api'),
-    campfire = require('./lib/campfire');
+    campfire = require('monkeycruncher-shared-code').campfire;
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -129,4 +129,5 @@ app.post('/register',
 // start the server
 app.listen(port, function () {
     console.log("Listening on " + port)
+    campfire.postMessage('MonkeyCruncher dashboard server started: ' + process.env.PORT);
 });
