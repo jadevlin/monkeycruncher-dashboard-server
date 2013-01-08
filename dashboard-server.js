@@ -10,7 +10,7 @@ var express = require('express'),
     usersMW = require('./lib/users-mw'),
     worksheetsMW = require('./lib/worksheets-mw'),
     authMW = require('./lib/authentication-mw'),
-    sessionStore = require('./lib/session-store'),
+    sessionStore = require('monkeycruncher-shared-code').sessionStore,
     editServer = require('./lib/edit-server-api'),
     campfire = require('./lib/campfire');
 
@@ -32,7 +32,7 @@ app.use(express.favicon());
 app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
-app.use(express.session({ store: sessionStore.createStore(express), secret: sessionSecret }));
+app.use(express.session({ store: sessionStore.createStore(express, "dash:", 3600), secret: sessionSecret }));
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
 app.use(express.errorHandler());

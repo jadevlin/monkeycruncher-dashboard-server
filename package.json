@@ -7,9 +7,6 @@
     },
     "dependencies": {
         "express": "*",
-        "redis": "*",
-        "connect-redis": "*",
-        "url": "*",
         "bcrypt": "*",
         "ejs": "*",
         "node-uuid": "*",
