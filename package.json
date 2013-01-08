@@ -7,13 +7,13 @@
     },
     "dependencies": {
         "express": "*",
-        "pg": "*",
         "redis": "*",
         "connect-redis": "*",
         "url": "*",
         "bcrypt": "*",
         "ejs": "*",
         "node-uuid": "*",
-        "request": "*"
+        "request": "*",
+        "monkeycruncher-shared-code": "git://github.com/JonyEpsilon/monkeycruncher-shared-code.git"
     }
 }
