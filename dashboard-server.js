@@ -111,7 +111,9 @@ app.post('/registerFork/:newUUID/:oldUUID',
 );
 
 // ** Public API for website **
-// These calls are not made by the user
+app.get('/worksheets/recent',
+    worksheetsMW.recentlyEditedWorksheets
+);
 
 // ** Other stuff **
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.
