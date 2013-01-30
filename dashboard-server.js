@@ -12,7 +12,8 @@ var express = require('express'),
     authMW = require('./lib/authentication-mw'),
     sessionStore = require('monkeycruncher-shared-code').sessionStore,
     editServer = require('./lib/edit-server-api'),
-    campfire = require('monkeycruncher-shared-code').campfire;
+    campfire = require('monkeycruncher-shared-code').campfire,
+    websiteMW = require('./lib/website-mw');
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -111,12 +112,15 @@ app.post('/registerFork/:newUUID/:oldUUID',
 );
 
 // ** Public API for website **
-app.get('/website/worksheets/recent',
-    worksheetsMW.recentlyEditedWorksheets
-);
-
+// This gets worksheet metadata. No authorization is required. Only metadata required for the website is returned,
+// unlike the authenticated API above. The return value might not be current as this call is aggressively cached.
+// TODO: aggressively cache.
 app.get('/website/worksheets/get/:id',
-    worksheetsMW.getWorksheet
+    websiteMW.getWorksheet
+);
+// Gets metadata for the most recently edited worksheets. See above.
+app.get('/website/worksheets/recent',
+    websiteMW.recentlyEditedWorksheets
 );
 
 // ** Other stuff **
