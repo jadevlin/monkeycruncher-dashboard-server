@@ -111,8 +111,12 @@ app.post('/registerFork/:newUUID/:oldUUID',
 );
 
 // ** Public API for website **
-app.get('/worksheets/recent',
+app.get('/website/worksheets/recent',
     worksheetsMW.recentlyEditedWorksheets
+);
+
+app.get('/website/worksheets/get/:id',
+    worksheetsMW.getWorksheet
 );
 
 // ** Other stuff **
