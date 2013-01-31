@@ -120,7 +120,7 @@ app.get('/website/worksheets/get/:id',
 );
 // Gets metadata for the most recently edited worksheets. See above.
 app.get('/website/worksheets/recent',
-    websiteMW.recentlyEditedWorksheets
+    websiteMW.recentlyEditedWorksheetIDs
 );
 
 // ** Other stuff **
