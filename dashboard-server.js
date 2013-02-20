@@ -126,12 +126,11 @@ app.get('/website/worksheets/recent',
 // ** Other stuff **
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.
 // requires parameters username, password and email in request body.
-// TODO: at the moment this just takes a simple form and redirects. Could be a bit smoother.
 app.post('/register',
     usersMW.register,
     function (request, response) {
         campfire.postMessage('New user registration: ' + request.body.username + '<' + request.body.email + '>');
-        response.redirect('/registration_success.html');
+        response.json({status: 'ok'});
     }
 );
 

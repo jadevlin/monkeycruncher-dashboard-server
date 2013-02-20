@@ -20,8 +20,9 @@
 <div class='container'>
     <div class='row'>
         <div class='span6 offset3'>
-            <form class="form-horizontal" id='registerForm' action="/register" method="post">
+            <form class="form-horizontal" id='registerForm'>
                 <legend>Sign up for MonkeyCruncher alpha ...</legend>
+                <div><p id="message" class="text-error"></p></div>
                 <div class="control-group">
                     <label class="control-label" for="inputUsername">Username</label>
 
@@ -33,14 +34,16 @@
                     <label class="control-label" for="inputEmail">Email</label>
 
                     <div class="controls">
-                        <input type="text" class='required email' name="email" id="inputEmail" placeholder="joe@bloggs.com">
+                        <input type="text" class='required email' name="email" id="inputEmail"
+                               placeholder="joe@bloggs.com">
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="inputPassword">Password</label>
 
                     <div class="controls">
-                        <input type="password" class='required' name="password" id="inputPassword" placeholder="Password">
+                        <input type="password" class='required' name="password" id="inputPassword"
+                               placeholder="Password">
                     </div>
                 </div>
                 <div class="control-group">
@@ -53,8 +56,26 @@
     </div>
 </div>
 <script>
-    $(document).ready(function(){
-        $("#registerForm").validate();
+    $(function () {
+        $("#registerForm").validate({
+            submitHandler: (function () {
+                var username = $('#inputUsername').val();
+                var email = $('#inputEmail').val();
+                var password = $('#inputPassword').val();
+                var body = {username: username, email: email, password: password};
+                $.post('/register', body,
+                        function (data) {
+                            // did registration succeed?
+                            if (data.status === 'ok')  window.location.href = '/registration_success.html';
+                            else $('#message').html('Something went wrong - please try again.');
+                        },
+                        'json'
+                ).fail(function (jqXHR) {
+                            $('#message').html(JSON.parse(jqXHR.responseText).error.message);
+                        }
+                );
+                return false;
+            })});
     });
 </script>
 </body>
