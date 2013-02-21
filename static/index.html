@@ -41,6 +41,17 @@
             </div>
         </div>
     </div>
+    <div class='row' data-bind="visible: (worksheets().length === 0)">
+        <div class='span12'>
+            <div class="alert alert-success alert-block">
+                <h4>Looks like you're new here!</h4>
+                An easy way to get started is to follow some of the "Getting started" worksheets at
+                <a target="_blank" href="http://www.monkeycruncher.org#getting-started">www.monkeycruncher.org</a>. Or, if you'd
+                like to make a new blank worksheet to start from, then hit the "Create new worksheet" button
+                below. Have fun!
+            </div>
+        </div>
+    </div>
     <div class='row'>
         <div class='span12'>
             <h1 style='padding-top: 80px'>Your worksheets</h1>
