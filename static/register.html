@@ -76,11 +76,11 @@
                         function (data) {
                             // did registration succeed?
                             if (data.status === 'ok')  window.location.href = '/registration_success.html';
-                            else $('#message').html('Something went wrong - please try again.');
+                            else $('#message').html(data.message);
                         },
                         'json'
                 ).fail(function (jqXHR) {
-                            $('#message').html(JSON.parse(jqXHR.responseText).error.message);
+                            $('#message').html('Something went wrong - please try again.');
                         }
                 );
                 return false;

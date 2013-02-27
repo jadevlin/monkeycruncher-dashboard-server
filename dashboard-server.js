@@ -13,8 +13,8 @@ var express = require('express'),
     redis = require('monkeycruncher-shared-code').redis("redis://blank:@localhost:6379/"),
     sessionStore = require('monkeycruncher-shared-code').sessionStore(redis),
     editServer = require('./lib/edit-server-api'),
-    campfire = require('monkeycruncher-shared-code').campfire,
-    websiteMW = require('./lib/website-mw');
+    websiteMW = require('./lib/website-mw'),
+    logging = require('monkeycruncher-shared-code').logging;
 
 // configuration variables
 var port = process.env.PORT || 5000;
@@ -31,13 +31,13 @@ if (secureOnly) app.use(function (request, response, next) {
 });
 // default middleware
 app.use(express.favicon());
-app.use(express.logger());
+app.use(express.logger(logging.expressFormatString));
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ store: sessionStore.createStore(express, "dash:", 3600), secret: sessionSecret }));
 app.use(app.router);
 app.use(express.static(__dirname + '/static'));
-app.use(express.errorHandler());
+app.use(logging.expressErrorHandler);
 
 // ** Client-facing API **
 
@@ -128,16 +128,11 @@ app.get('/website/worksheets/recent',
 // registration form - not sure this really belongs in the dashboard server, but it'll do for now.
 // requires parameters username, password and email in request body.
 app.post('/register',
-    usersMW.register,
-    function (request, response) {
-        campfire.postMessage('New user registration: ' + request.body.username + '<' + request.body.email + '>');
-        response.json({status: 'ok'});
-    }
+    usersMW.register
 );
 
 
 // start the server
 app.listen(port, function () {
-    console.log("Listening on " + port)
-    campfire.postMessage('MonkeyCruncher dashboard server started: ' + process.env.PORT);
+    logging.event("dashboard.startup", {port: port});
 });
