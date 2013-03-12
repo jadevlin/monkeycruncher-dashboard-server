@@ -28,15 +28,22 @@ $(function () {
             });
         }),
 
-        // handler for the worksheet edit links
         editWorksheet: (function (data) {
+            model.handleEdit(data, 'edit')
+        }),
+
+        recoveryEditWorksheet: (function (data) {
+            model.handleEdit(data, 'recovery')
+        }),
+
+        handleEdit: (function (data, mode) {
             // We contact the dashboard and instruct it to tell the edit-server that we are authorized
             // to edit this worksheet. It returns the authorization token that we will use to authenticate
             // with the edit server.
             var win = window.open('');
             postAuthenticated('/worksheets/authorizeEdit/' + encodeURIComponent(data.id),
                 function (response) {
-                    win.location.href = model.config.editServerURL + 'edit/' + encodeURIComponent(response.uuid) +
+                    win.location.href = model.config.editServerURL + mode + '/' + encodeURIComponent(response.uuid) +
                         '/' + encodeURIComponent(response.token);
                     // we want to move the current worksheet to the top of the list, and update its last_edited.
                     // This won't quite be in sync with the server, but it doesn't really matter.
