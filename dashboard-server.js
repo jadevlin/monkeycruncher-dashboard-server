@@ -114,8 +114,7 @@ app.post('/registerFork/:newUUID/:oldUUID',
 
 // ** Public API for website **
 // This gets worksheet metadata. No authorization is required. Only metadata required for the website is returned,
-// unlike the authenticated API above. The return value might not be current as this call is aggressively cached.
-// TODO: aggressively cache.
+// unlike the authenticated API above.
 app.get('/website/worksheets/get/:id',
     websiteMW.getWorksheet
 );
