@@ -118,7 +118,7 @@ app.post('/registerFork/:newUUID/:oldUUID',
 app.get('/website/worksheets/get/:id',
     websiteMW.getWorksheet
 );
-// Gets metadata for the most recently edited worksheets. See above.
+// Gets ids for the most recently edited worksheets. See above.
 app.get('/website/worksheets/recent',
     websiteMW.recentlyEditedWorksheetIDs
 );
