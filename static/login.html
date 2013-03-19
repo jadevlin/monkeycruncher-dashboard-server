@@ -69,6 +69,8 @@
                         // The /authenticate API call will pass us an anti-CSRF token that we must pass to
                         // the dashboard for it to use in the API calls.
                         if (data.status === 'ok')  {
+                            if (mixpanel) mixpanel.identify(data.userID);
+                            if (mixpanel) mixpanel.track("login");
                             window.location.href = '/index.html?_csrf=' + data._csrf;
                         }
                         else $('#message').html('Something went wrong - please try again.');
