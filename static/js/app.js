@@ -204,6 +204,7 @@ $(function () {
             model.user(data);
             // update user info on mixpanel
             if (mixpanel) {
+                mixpanel.identify(data.id);
                 mixpanel.people.set({
                     $name: data.username,
                     $email: data.email,
