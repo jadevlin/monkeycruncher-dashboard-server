@@ -223,6 +223,15 @@ $(function () {
         });
         getAuthenticatedJSON('/worksheets', function (data) {
             model.worksheets(data.map(makeWorksheetModel));
+            if (mixpanel) {
+                mixpanel.track_links(".view-link", "Followed worksheet link", function (link) {
+                    return {
+                        source: "Dashboard",
+                        uuid: $(link).attr("data-worksheet"),
+                        name: $(link).attr("data-name")
+                    }
+                });
+            }
         });
 
         ko.applyBindings(model);

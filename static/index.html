@@ -78,7 +78,7 @@
                             <p>Number of copies: ?</p>
                             <p>Link for sharing (read-only):
                                 <a target="_blank" class="view-link"
-                                   data-bind="text: viewLink, attr: {href: viewLink}"></a>
+                                   data-bind="text: viewLink, attr: {href: viewLink, 'data-worksheet': documentRef, 'data-name': name}"></a>
                             </p>
                             <hr/>
                             <a class='btn btn-mini btn-success' data-bind="click: $parent.editWorksheet">Edit</a>
