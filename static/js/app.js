@@ -111,6 +111,7 @@ $(function () {
                         postAuthenticated('/worksheets/create/' + encodeURIComponent(result),
                             function (data) {
                                 model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                                if (mixpanel) mixpanel.track("created worksheet", {name: result});
                             },
                             function () {
                                 bootbox.alert("There was a server problem while creating the worksheet.");
