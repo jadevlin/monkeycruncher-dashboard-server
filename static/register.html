@@ -81,14 +81,15 @@
                             // did registration succeed?
                             if (data.status === 'ok')  {
                                 if (mixpanel) {
-                                    // This gets sent when the user logs in, but it doesn't hurt to
-                                    // send it now, just in case they never log in.
                                     mixpanel.alias(data.userID);
                                     mixpanel.name_tag(username);
+                                    // This gets sent when the user logs in, but it doesn't hurt to
+                                    // send it now, just in case they never log in.
                                     mixpanel.people.set({
                                         $name: username,
                                         $email: email,
-                                        $username: username
+                                        $username: username,
+                                        $created: Date.now()
                                     });
                                 }
                                 redirectWithMPTrack('/registration_success.html', "Registered", {});
