@@ -195,16 +195,26 @@ $(function () {
         // config, as we will need it to make any authenticated API calls.
         model.config._csrf = getQueryParameterByName('_csrf');
 
+        // initialise tracking code
+        if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
+        if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
+
         // contact the server and get the user information and worksheet list
         getAuthenticatedJSON('/userinfo', function (data) {
             model.user(data);
+            // update user info on mixpanel
+            if (mixpanel) {
+                mixpanel.people.set({
+                    $name: data.username,
+                    $email: data.email,
+                    $username: data.username,
+                    admin: data.admin
+                });
+            }
         });
         getAuthenticatedJSON('/worksheets', function (data) {
             model.worksheets(data.map(makeWorksheetModel));
         });
-
-        if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
-        if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
 
         ko.applyBindings(model);
     });
