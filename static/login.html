@@ -76,9 +76,13 @@
                                     $username: username,
                                     $name: username
                                 });
-                                mixpanel.track("login");
+                                mixpanel.track("login", function () {
+                                    // TODO: make this nicer!
+                                    window.location.href = '/index.html?_csrf=' + data._csrf;
+                                });
+                            } else {
+                                window.location.href = '/index.html?_csrf=' + data._csrf;
                             }
-                            window.location.href = '/index.html?_csrf=' + data._csrf;
                         }
                         else $('#message').html('Something went wrong - please try again.');
                     },
