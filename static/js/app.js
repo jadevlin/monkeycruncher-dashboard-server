@@ -24,16 +24,18 @@ $(function () {
         // handler for the logout button
         logout: (function () {
             $.post('/logout', function () {
-                window.location.href = '/login.html';
+                redirectWithMPTrack('/login.html', "Logged out", {});
             });
         }),
 
         editWorksheet: (function (data) {
-            model.handleEdit(data, 'edit')
+            model.handleEdit(data, 'edit');
+            if (mixpanel) mixpanel.track("Edited worksheet", {id: data.id});
         }),
 
         recoveryEditWorksheet: (function (data) {
-            model.handleEdit(data, 'recovery')
+            model.handleEdit(data, 'recovery');
+            if (mixpanel) mixpanel.track("Recovery-edited worksheet", {id: data.id});
         }),
 
         handleEdit: (function (data, mode) {
@@ -66,6 +68,7 @@ $(function () {
                             '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
                             function () {
                                 data.name(result);
+                                if (mixpanel) mixpanel.track("Worksheet renamed", {id: data.id, name: result});
                             },
                             function () {
                                 bootbox.alert("There was a server problem executing the rename request.");
@@ -92,6 +95,7 @@ $(function () {
                             postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id),
                                 function () {
                                     model.worksheets.remove(data);
+                                    if (mixpanel) mixpanel.track("Worksheet deleted", {id: data.id});
                                 },
                                 function () {
                                     bootbox.alert("There was a server problem while deleting the worksheet.");
@@ -111,7 +115,7 @@ $(function () {
                         postAuthenticated('/worksheets/create/' + encodeURIComponent(result),
                             function (data) {
                                 model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                                if (mixpanel) mixpanel.track("created worksheet", {name: result});
+                                if (mixpanel) mixpanel.track("Created worksheet", {name: result});
                             },
                             function () {
                                 bootbox.alert("There was a server problem while creating the worksheet.");
@@ -127,7 +131,10 @@ $(function () {
                     if (result !== "" && result !== null) {
                         postAuthenticated('/worksheets/claim/' + encodeURIComponent(result),
                             function (data) {
-                                if (data.status === 'ok') model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                                if (data.status === 'ok') {
+                                    model.worksheets.unshift(makeWorksheetModel(data.worksheet));
+                                    if (mixpanel) mixpanel.track("Worksheet claimed", {uuid: result});
+                                }
                                 else bootbox.alert("It was not possible to claim the worksheet. Please check" +
                                     " that the password is correct. Note that unclaimed worksheets are deleted" +
                                     " after a few days.");
@@ -202,9 +209,10 @@ $(function () {
         // contact the server and get the user information and worksheet list
         getAuthenticatedJSON('/userinfo', function (data) {
             model.user(data);
-            // update user info on mixpanel
+            // we know who the user is, so update info on mixpanel
             if (mixpanel) {
                 mixpanel.identify(data.id);
+                mixpanel.name_tag(data.username);
                 mixpanel.people.set({
                     $name: data.username,
                     $email: data.email,

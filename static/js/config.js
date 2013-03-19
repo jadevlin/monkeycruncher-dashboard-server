@@ -1,3 +1,10 @@
+/*
+ * This file is part of MonkeyCruncher. Copyright (C) 2012-2013, Jony Hudson.
+ *
+ * MonkeyCruncher is licenced to you under the MIT licence. See the file
+ * LICENCE.txt for full details.
+ */
+
 $(function () {
 
     var model = {
@@ -12,5 +19,7 @@ $(function () {
         if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
         if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
         ko.applyBindings(model);
+
+        if (configLoadedCallback) configLoadedCallback();
     });
 });

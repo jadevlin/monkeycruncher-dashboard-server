@@ -70,19 +70,10 @@
                         // the dashboard for it to use in the API calls.
                         if (data.status === 'ok') {
                             if (mixpanel) {
+                                // we get in and identify the user as soon as is possible.
                                 mixpanel.identify(data.userID);
-                                mixpanel.name_tag(username);
-                                mixpanel.people.set({
-                                    $username: username,
-                                    $name: username
-                                });
-                                mixpanel.track("login", {}, function () {
-                                    // TODO: make this nicer!
-                                    window.location.href = '/index.html?_csrf=' + data._csrf;
-                                });
-                            } else {
-                                window.location.href = '/index.html?_csrf=' + data._csrf;
                             }
+                            redirectWithMPTrack('/index.html?_csrf=' + data._csrf, "Logged in", {});
                         }
                         else $('#message').html('Something went wrong - please try again.');
                     },

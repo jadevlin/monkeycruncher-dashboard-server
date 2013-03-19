@@ -64,3 +64,20 @@ var initialiseMP = function (mixpanelToken) {
     mixpanel.init(mixpanelToken);
 
 };
+
+var redirectWithMPTrack = function (url, eventName, properties) {
+    if (mixpanel) {
+        mixpanel.track(eventName, properties, function () {
+            // ideally reload when the mixpanel event is tracked
+            window.location.href = url;
+        });
+        setTimeout(function () {
+            // but don't leave the user waiting for mixpanel
+            window.location.href = url;
+        }, 500);
+    }
+    else {
+        // and if mixpanel is not enabled then just redirect straight away
+        window.location.href = url;
+    }
+}

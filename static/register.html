@@ -79,7 +79,20 @@
                 $.post('/register', body,
                         function (data) {
                             // did registration succeed?
-                            if (data.status === 'ok')  window.location.href = '/registration_success.html';
+                            if (data.status === 'ok')  {
+                                if (mixpanel) {
+                                    // This gets sent when the user logs in, but it doesn't hurt to
+                                    // send it now, just in case they never log in.
+                                    mixpanel.alias(data.userID);
+                                    mixpanel.name_tag(username);
+                                    mixpanel.people.set({
+                                        $name: username,
+                                        $email: email,
+                                        $username: username
+                                    });
+                                }
+                                redirectWithMPTrack('/registration_success.html', "Registered", {});
+                            }
                             else $('#message').html(data.message);
                         },
                         'json'
@@ -90,6 +103,10 @@
                 return false;
             })});
     });
+
+    var configLoadedCallback = function () {
+        if (mixpanel) mixpanel.track("Registration page viewed");
+    }
 </script>
 </body>
 
