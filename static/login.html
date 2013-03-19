@@ -73,7 +73,8 @@
                                 mixpanel.identify(data.userID);
                                 mixpanel.name_tag(username);
                                 mixpanel.people.set({
-                                    $username: username
+                                    $username: username,
+                                    $name: username
                                 });
                                 mixpanel.track("login");
                             }
