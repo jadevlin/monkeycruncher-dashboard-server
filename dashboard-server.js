@@ -52,7 +52,9 @@ app.post('/logout',
 // client configuration
 app.get('/config', function (request, response) {
     response.json({
-        editServerURL: editServer.url
+        editServerURL: editServer.url,
+        gaPropertyID: process.env.GA_PROPERTY_ID,
+        mixpanelToken: process.env.MIXPANEL_TOKEN
     });
 });
 //user

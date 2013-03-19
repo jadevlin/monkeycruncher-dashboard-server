@@ -202,6 +202,9 @@ $(function () {
             model.worksheets(data.map(makeWorksheetModel));
         });
 
+        if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
+        if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
+
         ko.applyBindings(model);
     });
 
