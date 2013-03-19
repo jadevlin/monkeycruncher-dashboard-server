@@ -76,7 +76,7 @@
                                     $username: username,
                                     $name: username
                                 });
-                                mixpanel.track("login", function () {
+                                mixpanel.track("login", {}, function () {
                                     // TODO: make this nicer!
                                     window.location.href = '/index.html?_csrf=' + data._csrf;
                                 });
