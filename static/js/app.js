@@ -21,6 +21,9 @@ $(function () {
         // the list of worksheets on the user's account
         worksheets: ko.observableArray([]),
 
+        // flag for UI
+        worksheetsLoaded: ko.observable(false),
+
         // handler for the logout button
         logout: (function () {
             $.post('/logout', function () {
@@ -232,6 +235,7 @@ $(function () {
         });
         getAuthenticatedJSON('/worksheets', function (data) {
             model.worksheets(data.map(makeWorksheetModel));
+            model.worksheetsLoaded(true);
             if (!(typeof mixpanel === "undefined")) {
                 mixpanel.track_links(".view-link", "Followed worksheet link", function (link) {
                     return {
