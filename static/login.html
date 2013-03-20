@@ -69,7 +69,7 @@
                         // The /authenticate API call will pass us an anti-CSRF token that we must pass to
                         // the dashboard for it to use in the API calls.
                         if (data.status === 'ok') {
-                            if (mixpanel) {
+                            if (!(typeof mixpanel === "undefined")) {
                                 // we get in and identify the user as soon as is possible.
                                 mixpanel.identify(data.userID);
                             }
@@ -87,7 +87,7 @@
     });
 
     var configLoadedCallback = function () {
-        if (mixpanel) mixpanel.register_once({'first contact': 'login'});
+        if (!(typeof mixpanel === "undefined")) mixpanel.register_once({'first contact': 'login'});
     };
 </script>
 </html>

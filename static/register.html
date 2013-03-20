@@ -80,7 +80,7 @@
                         function (data) {
                             // did registration succeed?
                             if (data.status === 'ok') {
-                                if (mixpanel) {
+                                if (!(typeof mixpanel === "undefined")) {
                                     mixpanel.alias(data.userID);
                                     mixpanel.name_tag(username);
                                     // This gets sent when the user logs in, but it doesn't hurt to
@@ -106,7 +106,7 @@
     });
 
     var configLoadedCallback = function () {
-        if (mixpanel) {
+        if (!(typeof mixpanel === "undefined")) {
             mixpanel.register_once({'first contact': 'register'});
             mixpanel.track("Registration page viewed");
         }

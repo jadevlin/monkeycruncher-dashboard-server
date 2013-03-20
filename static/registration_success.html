@@ -30,7 +30,7 @@
 
 <script>
     var configLoadedCallback = function () {
-        if (mixpanel) {
+        if (!(typeof mixpanel === "undefined")) {
             // there really shouldn't be any of these!
             mixpanel.register_once({'first contact': 'register success'});
             mixpanel.track("Registration success page viewed");

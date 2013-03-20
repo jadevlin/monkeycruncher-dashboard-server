@@ -51,7 +51,7 @@ $(function () {
                     model.worksheets.unshift(data);
                     // this won't be an ISO 8601 date, like those from the server, but we'll get away with it.
                     data.lastEdited(Date());
-                    if (mixpanel) {
+                    if (!(typeof mixpanel === "undefined")) {
                         mixpanel.track("Edited worksheet", {id: data.id, name: data.name(), mode: mode});
                         mixpanel.people.increment("Worksheets edited");
                     }
@@ -70,7 +70,7 @@ $(function () {
                             '/worksheets/rename/' + encodeURIComponent(data.id) + '/' + encodeURIComponent(result),
                             function () {
                                 data.name(result);
-                                if (mixpanel) mixpanel.track("Worksheet renamed", {id: data.id, name: result});
+                                if (!(typeof mixpanel === "undefined")) mixpanel.track("Worksheet renamed", {id: data.id, name: result});
                             },
                             function () {
                                 bootbox.alert("There was a server problem executing the rename request.");
@@ -97,7 +97,7 @@ $(function () {
                             postAuthenticated('/worksheets/delete/' + encodeURIComponent(data.id),
                                 function () {
                                     model.worksheets.remove(data);
-                                    if (mixpanel) mixpanel.track("Worksheet deleted", {id: data.id, name: data.name()});
+                                    if (!(typeof mixpanel === "undefined")) mixpanel.track("Worksheet deleted", {id: data.id, name: data.name()});
                                 },
                                 function () {
                                     bootbox.alert("There was a server problem while deleting the worksheet.");
@@ -117,7 +117,7 @@ $(function () {
                         postAuthenticated('/worksheets/create/' + encodeURIComponent(result),
                             function (data) {
                                 model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                                if (mixpanel) {
+                                if (!(typeof mixpanel === "undefined")) {
                                     mixpanel.track("Created worksheet", {name: result});
                                     mixpanel.people.increment("Worksheets created");
                                 }
@@ -138,7 +138,7 @@ $(function () {
                             function (data) {
                                 if (data.status === 'ok') {
                                     model.worksheets.unshift(makeWorksheetModel(data.worksheet));
-                                    if (mixpanel) mixpanel.track("Worksheet claimed", {uuid: result, data: data.worksheet.name});
+                                    if (!(typeof mixpanel === "undefined")) mixpanel.track("Worksheet claimed", {uuid: result, data: data.worksheet.name});
                                 }
                                 else bootbox.alert("It was not possible to claim the worksheet. Please check" +
                                     " that the password is correct. Note that unclaimed worksheets are deleted" +
@@ -212,13 +212,13 @@ $(function () {
         if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
 
         // seems pretty unlikely that they should land here ...
-        if (mixpanel) mixpanel.register_once({'first contact': 'dashboard'});
+        if (!(typeof mixpanel === "undefined")) mixpanel.register_once({'first contact': 'dashboard'});
 
         // contact the server and get the user information and worksheet list
         getAuthenticatedJSON('/userinfo', function (data) {
             model.user(data);
             // we know who the user is, so update info on mixpanel
-            if (mixpanel) {
+            if (!(typeof mixpanel === "undefined")) {
                 mixpanel.identify(data.id);
                 mixpanel.name_tag(data.username);
                 mixpanel.people.set({
@@ -232,7 +232,7 @@ $(function () {
         });
         getAuthenticatedJSON('/worksheets', function (data) {
             model.worksheets(data.map(makeWorksheetModel));
-            if (mixpanel) {
+            if (!(typeof mixpanel === "undefined")) {
                 mixpanel.track_links(".view-link", "Followed worksheet link", function (link) {
                     return {
                         source: "Dashboard",
@@ -243,7 +243,7 @@ $(function () {
             }
         });
 
-        ko.applyBindings(model);
+        $(function () {ko.applyBindings(model)});
     });
 
     // for easier debugging

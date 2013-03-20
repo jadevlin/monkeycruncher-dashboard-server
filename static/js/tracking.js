@@ -66,7 +66,7 @@ var initialiseMP = function (mixpanelToken) {
 };
 
 var redirectWithMPTrack = function (url, eventName, properties) {
-    if (mixpanel) {
+    if (!(typeof mixpanel === "undefined")) {
         mixpanel.track(eventName, properties, function () {
             // ideally reload when the mixpanel event is tracked
             window.location.href = url;

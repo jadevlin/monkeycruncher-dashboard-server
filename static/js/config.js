@@ -18,7 +18,7 @@ $(function () {
 
         if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
         if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
-        ko.applyBindings(model);
+        $(function () {ko.applyBindings(model)});
 
         if (configLoadedCallback) configLoadedCallback();
     });
