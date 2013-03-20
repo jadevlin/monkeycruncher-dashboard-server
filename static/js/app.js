@@ -211,6 +211,9 @@ $(function () {
         if (model.config.gaPropertyID) initialiseGA(model.config.gaPropertyID);
         if (model.config.mixpanelToken) initialiseMP(model.config.mixpanelToken);
 
+        // seems pretty unlikely that they should land here ...
+        if (mixpanel) mixpanel.register_once({'first contact': 'dashboard'});
+
         // contact the server and get the user information and worksheet list
         getAuthenticatedJSON('/userinfo', function (data) {
             model.user(data);

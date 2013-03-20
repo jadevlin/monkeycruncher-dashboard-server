@@ -30,7 +30,11 @@
 
 <script>
     var configLoadedCallback = function () {
-        if (mixpanel) mixpanel.track("Registration success page viewed");
+        if (mixpanel) {
+            // there really shouldn't be any of these!
+            mixpanel.register_once({'first contact': 'register success'});
+            mixpanel.track("Registration success page viewed");
+        }
     }
 </script>
 </body>

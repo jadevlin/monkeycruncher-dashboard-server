@@ -85,5 +85,9 @@
             return false;
         });
     });
+
+    var configLoadedCallback = function () {
+        if (mixpanel) mixpanel.register_once({'first contact': 'login'});
+    };
 </script>
 </html>

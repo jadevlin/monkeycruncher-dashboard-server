@@ -79,7 +79,7 @@
                 $.post('/register', body,
                         function (data) {
                             // did registration succeed?
-                            if (data.status === 'ok')  {
+                            if (data.status === 'ok') {
                                 if (mixpanel) {
                                     mixpanel.alias(data.userID);
                                     mixpanel.name_tag(username);
@@ -106,7 +106,10 @@
     });
 
     var configLoadedCallback = function () {
-        if (mixpanel) mixpanel.track("Registration page viewed");
+        if (mixpanel) {
+            mixpanel.register_once({'first contact': 'register'});
+            mixpanel.track("Registration page viewed");
+        }
     }
 </script>
 </body>
